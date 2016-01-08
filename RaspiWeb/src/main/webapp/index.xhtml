@@ -1,0 +1,337 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Raspi Web</title>
+    </h:head>
+    <h:body>
+
+        <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+            <p:graphicImage name="images/ajax_loading_bar.gif" />
+        </p:dialog>  
+
+        <p:tabView id="tabView">
+            <p:tab title="Media">
+
+                <h:form id="mediaControlsForm">
+                    <p:growl id="messages7" showDetail="true" />
+                    <h:panelGrid columns="6" cellpadding="2">
+                        <p:commandButton value="Pause / Resume" update=":tabView:mediaControlsForm" action="#{mediaBean.pauseOrResume()}" />    
+                        <p:commandButton value="Stop" update=":tabView:mediaControlsForm" action="#{mediaBean.stop()}" />
+                        <p:commandButton value="Up Volume" update=":tabView:mediaControlsForm" action="#{mediaBean.increaseVolume()}" />  
+                        <p:commandButton value="Down Volume" update=":tabView:mediaControlsForm" action="#{mediaBean.decreaseVolume()}" />  
+                        <p:commandButton value="&lt;&lt;" title="seek -600 secs" rendered="false" update=":tabView:mediaControlsForm" action="#{mediaBean.seekMinus600()}" /> 
+                        <p:commandButton value="&lt; Seek" title="seek -30 secs" update=":tabView:mediaControlsForm" action="#{mediaBean.seekMinus30()}" /> 
+                        <p:commandButton value="Seek &gt;" title="seek +30 secs" update=":tabView:mediaControlsForm" action="#{mediaBean.seekPlus30()}" />     
+                        <p:commandButton value="&gt;&gt;" title="seek +600 secs" rendered="false" update=":tabView:mediaControlsForm" action="#{mediaBean.seekPlus600()}" />    
+                    </h:panelGrid>                  
+                </h:form>
+
+                <p:tabView id="accordionPanel1">
+
+                    <p:tab id="allMedia" title="All Media" style="margin-bottom:20px">
+                        <h:form id="mediaForm">  
+                            <p:growl id="messages0" showDetail="true" />
+                            <p:dataTable id="mediaTable" var="file" value="#{mediaBean.mediaFiles}" selectionMode="single" selection="#{mediaBean.selectedFile}" rowKey="#{file.name}">                          
+                                <f:facet name="header">
+                                    Available Storage : #{mediaBean.getFreeMemUsage()} Bytes / Total Storage : #{mediaBean.getTotalMemUsage()} Bytes
+                                    <br/>
+                                    <p:commandButton value="Play" update=":tabView:accordionPanel1" action="#{mediaBean.playSelectedFile()}" />
+                                    <p:commandButton value="Refresh" update=":tabView:accordionPanel1" action="#{mediaBean.loadMediaFiles()}" />
+                                    <p:commandButton value="Add to Play List" update=":tabView:accordionPanel1" action="#{mediaBean.addSelectedFile()}" />                      
+                                    <p:commandButton value="Remove" update=":tabView:accordionPanel1" action="#{mediaBean.deleteSelectedFile()}" />                        
+                                </f:facet>
+                                <p:ajax event="rowSelect" />
+                                <p:column headerText="Name" style="width:400px;text-align: center" sortBy="#{mediaBean.getName(file)}">
+                                    <h:outputText value="#{mediaBean.getName(file)}" />
+                                </p:column>
+                                <p:column headerText="Type" style="width:50px;text-align: center" sortBy="#{mediaBean.getExt(file)}">
+                                    <h:outputText value="#{mediaBean.getExt(file)}" />
+                                </p:column>                                       
+                                <p:column headerText="Size (Bytes)" style="width:100px;text-align: center" sortBy="#{mediaBean.getSizeActual(file)}">
+                                    <h:outputText value="#{mediaBean.getSize(file)}" />
+                                </p:column>                               
+                                <f:facet name="footer">
+                                    Available Storage : #{mediaBean.getFreeMemUsage()} Bytes / Total Storage : #{mediaBean.getTotalMemUsage()} Bytes
+                                    <br/>                                   
+                                    <p:commandButton value="Play" update=":tabView:accordionPanel1" action="#{mediaBean.playSelectedFile()}" />
+                                    <p:commandButton value="Refresh" update=":tabView:accordionPanel1" action="#{mediaBean.loadMediaFiles()}" />
+                                    <p:commandButton value="Add to PlayList" update=":tabView:accordionPanel1" action="#{mediaBean.addSelectedFile()}" />                      
+                                    <p:commandButton value="Remove" update=":tabView:accordionPanel1" action="#{mediaBean.deleteSelectedFile()}" />                           
+                                </f:facet>
+                            </p:dataTable>                            
+                        </h:form>
+                    </p:tab>
+
+                    <p:tab id="playListTab" title="Play List" style="margin-bottom:20px">
+                        <h:form id="playListForm">
+                            <p:growl id="messages2" showDetail="true" />                           
+                            <p:dataTable id="playListTable" var="file" value="#{playListBean.playList}" selectionMode="single" selection="#{playListBean.selectedFile}" rowKey="#{file.name}">
+                                <f:facet name="header">
+                                    <p:commandButton value="Play" actionListener="#{mediaBean.playAll}" update=":tabView:accordionPanel1:playListForm" />
+                                    <p:selectBooleanButton value="#{mediaBean.repeat}" onLabel="Repeat On" offLabel="Repeat Off">
+                                        <p:ajax update=":tabView:accordionPanel1:playListForm" />
+                                    </p:selectBooleanButton>
+                                    <p:commandButton value="Clear" actionListener="#{playListBean.clearPlayList}" update=":tabView:accordionPanel1:playListForm" />
+                                    <p:commandButton value="Save" actionListener="#{playListBean.savePlayList()}" update=":tabView:accordionPanel1:playListForm" />    
+                                    <p:commandButton value="Move Up" action="#{playListBean.upSelectedFile()}" update=":tabView:accordionPanel1:playListForm" />
+                                    <p:commandButton value="Move Down" action="#{playListBean.downSelectedFile()}" update=":tabView:accordionPanel1:playListForm" />
+                                    <p:commandButton value="Remove" action="#{playListBean.deleteSelectedFile()}" update=":tabView:accordionPanel1:playListForm" />
+                                </f:facet>
+                                <p:ajax event="rowSelect" />
+                                <p:column headerText="Name" style="width:700px;text-align: center">
+                                    <h:outputText value="#{mediaBean.getName(file)}" />
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </p:tab>
+
+                    <p:tab title="Upload Media" style="margin-bottom:20px">
+
+                        <h:form id="uploadForm" enctype="multipart/form-data">
+                            <p:fileUpload fileUploadListener="#{fileUploadBean.handleFileUpload}" mode="advanced" update="messages,:tabView:accordionPanel1" auto="true" sizeLimit="1000000000" allowTypes="/(\.|\/)(mp3|MP3|mp4|MP4|flv|FLV|mov|MOV|avi|AVI)$/" />
+
+                            <p:growl id="messages" showDetail="true" />
+                        </h:form>
+                    </p:tab>                    
+
+                    <p:tab title="Play from Youtube (Experimental)" style="margin-bottom:20px">
+                        <h:form id="youtubeForm">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:outputLabel for="name" value="Shareable Youtube link :" />
+                                <p:inputText id="name" value="#{mediaBean.youtubeURL}" required="true" requiredMessage="URL is needed" size="30" />           
+                                <p:commandButton value="Play" actionListener="#{mediaBean.playFromURL()}" update="messages1,:tabView:accordionPanel1:youtubeForm" />
+                                <p:commandButton value="Reset" actionListener="#{mediaBean.clearYoutubeURL()}" update="youtubeForm" />
+                                <p:growl id="messages1" showDetail="true" />
+                            </h:panelGrid>
+                        </h:form>
+                    </p:tab>
+
+                </p:tabView>
+            </p:tab>
+
+            <p:tab title="Clock">
+                <p:tabView id="accordionPanel2">
+                    <p:tab title="Alarm" style="margin-bottom:20px">
+                        <h:form id="alarmForm">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:outputLabel for="name" value="Name:" />
+                                <p:inputText id="name" value="#{clockBean.alarmEntry.name}" required="true" requiredMessage="Name is needed" />
+
+                                <p:outputLabel value="Hours : " />
+                                <p:selectOneMenu id="hrs" value="#{clockBean.alarmEntry.hours}" style="width:50px">
+                                    <f:selectItem itemLabel="00" itemValue="00" />
+                                    <f:selectItem itemLabel="01" itemValue="01" />
+                                    <f:selectItem itemLabel="02" itemValue="02" />
+                                    <f:selectItem itemLabel="03" itemValue="03" />
+                                    <f:selectItem itemLabel="04" itemValue="04" />
+                                    <f:selectItem itemLabel="05" itemValue="05" />
+                                    <f:selectItem itemLabel="06" itemValue="06" />
+                                    <f:selectItem itemLabel="07" itemValue="07" />
+                                    <f:selectItem itemLabel="08" itemValue="08" />
+                                    <f:selectItem itemLabel="09" itemValue="09" />
+                                    <f:selectItem itemLabel="10" itemValue="10" />
+                                    <f:selectItem itemLabel="11" itemValue="11" />
+                                    <f:selectItem itemLabel="12" itemValue="12" />
+                                    <f:selectItem itemLabel="13" itemValue="13" />
+                                    <f:selectItem itemLabel="14" itemValue="14" />
+                                    <f:selectItem itemLabel="15" itemValue="15" />
+                                    <f:selectItem itemLabel="16" itemValue="16" />
+                                    <f:selectItem itemLabel="17" itemValue="17" />
+                                    <f:selectItem itemLabel="18" itemValue="18" />
+                                    <f:selectItem itemLabel="19" itemValue="19" />
+                                    <f:selectItem itemLabel="20" itemValue="20" />
+                                    <f:selectItem itemLabel="21" itemValue="21" />                                                                                
+                                    <f:selectItem itemLabel="22" itemValue="22" />
+                                    <f:selectItem itemLabel="23" itemValue="23" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Minutes : " />
+                                <p:selectOneMenu id="mins" value="#{clockBean.alarmEntry.mins}" style="width:50px">
+                                    <f:selectItem itemLabel="00" itemValue="00" />
+                                    <f:selectItem itemLabel="15" itemValue="15" />
+                                    <f:selectItem itemLabel="30" itemValue="30" />
+                                    <f:selectItem itemLabel="45" itemValue="45" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="day" value="Day : " />
+                                <p:selectManyCheckbox id="day" value="#{clockBean.alarmEntry.selectedDays}" layout="grid" columns="1" required="true" requiredMessage="Day is needed">                                                               
+                                    <f:selectItems value="#{clockBean.allDays}" var="day" itemLabel="#{day}" itemValue="#{day}" />
+                                </p:selectManyCheckbox>        
+
+                                <p:outputLabel for="chooseMedia" value="Media : " />
+                                <p:selectOneMenu id="chooseMedia" value="#{clockBean.alarmEntry.chosenMedia}" disabled="#{clockBean.alarmEntry.playList}" style="width:600px">
+                                    <f:selectItems value="#{mediaBean.mediaFileNames}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel value="Play PlayList : " />
+                                <p:selectBooleanCheckbox value="#{clockBean.alarmEntry.playList}">
+                                    <p:ajax update="chooseMedia" />
+                                </p:selectBooleanCheckbox>
+                                <p:commandButton value="Add" actionListener="#{clockBean.addAlarm()}" update="messages1,:tabView:accordionPanel2:alarmForm,:tabView:accordionPanel2:alarmListForm" />
+                                <p:commandButton value="Clear" actionListener="#{clockBean.clearAlarm()}" process="@form" update="messages1,:tabView:accordionPanel2:alarmForm,:tabView:accordionPanel2:alarmListForm" />
+                                <p:growl id="messages1" showDetail="true" />
+                            </h:panelGrid>
+                        </h:form>
+                        <h:form id="alarmListForm">
+                            <br/>
+                            <p:dataTable id="alarmTable" var="alarm" value="#{clockBean.alarmList}" selectionMode="single" selection="#{clockBean.selectedAlarmEntry}" rowKey="#{alarm.name}">
+                                <p:ajax event="rowSelect" update=":tabView:accordionPanel2:alarmForm" />
+                                <p:column headerText="Name" style="width:25px;text-align: center" sortBy="#{alarm.name}">
+                                    <h:outputText value="#{alarm.name}" />
+                                </p:column>
+                                <p:column headerText="Time" style="width:25px;text-align: center" sortBy="#{alarm.alarmDisplayTime}">
+                                    <h:outputText value="#{alarm.alarmDisplayTime}" />
+                                </p:column>
+                                <p:column headerText="Days" style="width:150px;text-align: center">
+                                    <h:outputText value="#{alarm.selectedDaysToDisplay}" />
+                                </p:column>
+                                <p:column headerText="Media" style="width:50px;text-align: center">
+                                    <h:outputText value="#{alarm.displayChosenMedia}" />
+                                </p:column>
+                                <p:column headerText="Active" style="width:50px;text-align: center">
+                                    <h:outputText value="#{alarm.activeString}" />
+                                </p:column>
+                                <f:facet name="footer">
+                                    <p:commandButton value="Clear All" actionListener="#{clockBean.clearAllAlarms()}" update=":tabView:accordionPanel2:alarmListForm" />
+                                    <p:commandButton value="Save Alarms" actionListener="#{clockBean.saveAlarmList()}" update=":tabView:accordionPanel2:alarmListForm:messages1" />
+                                    <p:commandButton value="Remove Alarm" actionListener="#{clockBean.deleteAlarm()}" update=":tabView:accordionPanel2:alarmListForm,:tabView:accordionPanel2:alarmForm" />
+                                    <p:commandButton value="Activate Alarm" actionListener="#{clockBean.activateAlarm()}" update=":tabView:accordionPanel2:alarmListForm,:tabView:accordionPanel2:alarmForm" />
+                                    <p:commandButton value="De-Activate Alarm" actionListener="#{clockBean.deActivateAlarm()}" update=":tabView:accordionPanel2:alarmListForm,:tabView:accordionPanel2:alarmForm" />
+                                </f:facet>
+                            </p:dataTable>
+                            <br/>
+                            <p:growl id="messages1" showDetail="true" />                            
+                        </h:form>
+                    </p:tab>
+                </p:tabView>
+            </p:tab>
+
+            <p:tab title="Motion">
+                <p:tabView id="accordionPanel3"> 
+                    <p:tab title="Motion Detection" style="margin-bottom:20px">
+                        <h:form id="motionForm">
+                            <h:panelGrid columns="3" cellpadding="5">
+                                <p:outputLabel value="Make sure you have plugged in your USB camera" />
+                                <p:commandButton value="Start" actionListener="#{motionBean.startMotion()}" update="messages4" />
+                                <p:commandButton value="Stop" actionListener="#{motionBean.stopMotion()}" update="messages4" />                               
+                                <p:growl id="messages4" showDetail="true" />
+                            </h:panelGrid>
+                        </h:form>
+                    </p:tab>
+                    <p:tab title="Preferences" style="margin-bottom:20px">
+                        <h:form id="preferencesForm">
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <p:outputLabel value="Start Motion Detection on Startup :" />
+                                <p:selectBooleanCheckbox value="#{motionBean.startMotionOnStartup}">
+                                    <p:ajax />
+                                </p:selectBooleanCheckbox>
+                                <p:outputLabel value="Status Message : " />
+                                <p:inputText value="#{notificationBean.notificationMsg}" />
+                                <p:outputLabel value="Send Status Every : " />
+                                <p:selectOneButton id="selection" value="#{notificationBean.when}">
+                                    <f:selectItem itemLabel="Never" itemValue="-1" />
+                                    <f:selectItem itemLabel="15 mins" itemValue="15" />
+                                    <f:selectItem itemLabel="30 mins" itemValue="30" />
+                                    <f:selectItem itemLabel="1 hour" itemValue="0" />
+                                    <p:ajax update=":tabView:accordionPanel3:preferencesForm:selection" />
+                                </p:selectOneButton>
+                                <p:outputLabel value="Email Provider : " />
+                                <p:selectOneButton id="providerSelection" value="#{notificationBean.mailProvider}">
+                                    <f:selectItem itemLabel="GOOGLE" itemValue="#{notificationBean.google}"/>
+                                    <f:selectItem itemLabel="YAHOO" itemValue="#{notificationBean.yahoo}"/>
+                                    <f:selectItem itemLabel="MICROSOFT" itemValue="#{notificationBean.microsoft}"/>
+                                    <p:ajax update=":tabView:accordionPanel3:preferencesForm:providerSelection" />
+                                </p:selectOneButton>
+                                <p:outputLabel value="Full Email ID : " />
+                                <p:inputText value="#{notificationBean.email}" />
+                                <p:outputLabel value="Password : " />
+                                <p:password value="#{notificationBean.password}" />                                                            
+                                <p:outputLabel value="Email Event Start :" />
+                                <p:selectBooleanCheckbox value="#{watcherBean.notifyEventStart}">
+                                    <p:ajax />
+                                </p:selectBooleanCheckbox>
+                                <p:outputLabel value="Email Attachment &amp; Delete :" />
+                                <p:selectBooleanCheckbox value="#{watcherBean.notifyAttachment}">
+                                    <p:ajax />
+                                </p:selectBooleanCheckbox>                          
+                                <p:commandButton value="Save Preferences" actionListener="#{notificationBean.savePreferences()}" update="messages5" />
+                                <p:growl id="messages5" showDetail="true" />
+                            </h:panelGrid>
+                        </h:form>
+                    </p:tab>
+
+                    <p:tab title="Motion Recordings" style="margin-bottom:20px">                        
+                        <p:tabView id="accordionPanel4">                             
+                            <p:tab title="Recordings - keeping latest 50 only" style="margin-bottom:20px">
+
+                                <h:form id="recordingForm">
+                                    <p:growl id="messages6" showDetail="true" />
+                                    <f:view beforePhase="#{watcherBean.loadRecordingFiles()}">
+                                        <p:dataTable id="recordings" var="file" value="#{watcherBean.recordingFiles}" selectionMode="single" selection="#{watcherBean.selectedFile}" rowKey="#{file.name}">
+                                            <f:facet name="header">
+                                                Available Storage : #{mediaBean.getFreeMemUsage()} Bytes / Total Storage : #{mediaBean.getTotalMemUsage()} Bytes                                                
+                                                <br/>
+                                                <p:commandButton value="Refresh" action="#{watcherBean.loadRecordingFiles()}" update="recordings" />
+                                                <p:commandButton value="Play" update="recordings" action="#{watcherBean.playSelectedFile()}" />  
+                                                <p:commandButton value="Email and Remove" update="recordings" action="#{watcherBean.deliverAndDelete()}" />  
+                                                <p:commandButton value="Remove" update="recordings" action="#{watcherBean.deleteSelectedFile()}" />
+                                                <p:commandButton value="Remove All" update="recordings" action="#{watcherBean.deleteAll()}" />
+                                            </f:facet>
+                                            <p:ajax event="rowSelect" />
+                                            <p:column headerText="Name" style="width:200px;text-align: center" sortBy="#{mediaBean.getName(file)}">
+                                                <h:outputText value="#{mediaBean.getName(file)}" />
+                                            </p:column>
+                                            <p:column headerText="Type" style="width:50px;text-align: center" sortBy="#{mediaBean.getExt(file)}">
+                                                <h:outputText value="#{mediaBean.getExt(file)}" />
+                                            </p:column>                                       
+                                            <p:column headerText="Size (Bytes)" style="width:100px;text-align: center" sortBy="#{mediaBean.getSizeActual(file)}">
+                                                <h:outputText value="#{mediaBean.getSize(file)}" />
+                                            </p:column>                               
+                                            <p:column headerText="Last Modified" style="width:100px;text-align: center" sortBy="#{mediaBean.getlastModified(toCheck)}">
+                                                <h:outputText value="#{mediaBean.getlastModified(file)}" />
+                                            </p:column>
+                                            <f:facet name="footer">                                                                        
+                                                Available Storage : #{mediaBean.getFreeMemUsage()} Bytes / Total Storage : #{mediaBean.getTotalMemUsage()} Bytes  
+                                                <br/>
+                                                <p:commandButton value="Refresh" action="#{watcherBean.loadRecordingFiles()}" update="recordings" />
+                                                <p:commandButton value="Play" update="recordings" action="#{watcherBean.playSelectedFile()}" />  
+                                                <p:commandButton value="Email and Remove" update="recordings" action="#{watcherBean.deliverAndDelete()}" />  
+                                                <p:commandButton value="Remove" update="recordings" action="#{watcherBean.deleteSelectedFile()}" />
+                                                <p:commandButton value="Remove All" update="recordings" action="#{watcherBean.deleteAll()}" />
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </f:view>
+                                </h:form>
+                            </p:tab>    
+
+                            <p:tab title="Emailing Error Log" style="margin-bottom:20px">
+                                <h:form id="errorForm">
+                                    <h:panelGrid columns="3" cellpadding="5">
+                                        <p:commandButton value="Refresh" update="errors" />
+                                        <p:commandButton value="Clear" actionListener="#{watcherBean.clearErrors()}" update="errors" />
+                                        <p:dataList id="errors" value="#{watcherBean.errors}" var="error" type="ordered">
+                                            <f:facet name="header">
+                                                Errors
+                                            </f:facet>
+                                            #{error.toString()}
+                                        </p:dataList>
+                                    </h:panelGrid>
+                                </h:form>
+                            </p:tab>
+
+                        </p:tabView>
+                    </p:tab>
+                </p:tabView>
+            </p:tab>
+
+        </p:tabView>
+
+    </h:body>
+</html>
+
