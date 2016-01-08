@@ -176,7 +176,7 @@ public class ClockBean {
     }
 
     public void activateAlarm() {
-        activateDeactvteAlarms((AlarmEntry alarmEntry) -> {
+        activateDeactvteAlarms((AlarmEntry alarmEntry1) -> {
             if (alarmEntry.isActive()) {
                 FacesContext context = FacesContext.getCurrentInstance();
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Already Active", "Alarm is already Active"));
@@ -188,7 +188,7 @@ public class ClockBean {
     }
 
     public void deActivateAlarm() {
-        activateDeactvteAlarms((AlarmEntry alarmEntry) -> {
+        activateDeactvteAlarms((AlarmEntry alarmEntry1) -> {
             if (!selectedAlarmEntry.isActive()) {
                 FacesContext context = FacesContext.getCurrentInstance();
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Already InActive", "Alarm is already InActive"));
