@@ -9,4 +9,7 @@
             <var>bundle</var>
         </resource-bundle>
     </application>
+    <lifecycle>
+        <phase-listener id="nocache">org.raspi.phaselistener.CacheControlPhaseListener</phase-listener>
+    </lifecycle>
 </faces-config>
