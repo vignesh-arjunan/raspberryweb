@@ -4,6 +4,7 @@ import org.raspi.execute.ProcessExecutor;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,17 +17,25 @@ import java.util.stream.Stream;
 public class MediaPlayer {
 
     private File toBePlayed;
-    private String videoURL;
+    private URI videoURI;
     private ProcessExecutor player;
+    private static MediaPlayer mediaPlayer;
+
+    public static boolean isPlayingVideo() {
+        if (mediaPlayer == null) {
+            return false;
+        }
+        return mediaPlayer.getPlayer().getProcess().isAlive() && mediaPlayer.isVideo();
+    }
 
     public MediaPlayer(File file) {
         Objects.requireNonNull(file, "File cannot be null");
         toBePlayed = file;
     }
 
-    public MediaPlayer(String videoURL) {
+    public MediaPlayer(URI videoURL) {
         Objects.requireNonNull(videoURL, "videoURL cannot be null");
-        this.videoURL = videoURL;
+        this.videoURI = videoURL;
     }
 
     public File getToBePlayed() {
@@ -34,7 +43,7 @@ public class MediaPlayer {
     }
 
     public boolean isVideo() {
-        if (videoURL != null) {
+        if (videoURI != null) {
             return true;
         }
         return Stream.of(Constants.MediaFormat.values())
@@ -68,10 +77,15 @@ public class MediaPlayer {
         if (toBePlayed != null) {
             commands.add(toBePlayed.getAbsolutePath());
         } else {
-            commands.add(videoURL.trim());
+            commands.add(videoURI.toString());
         }
 
         commands.forEach(System.out::println);
+
+        if (isVideo()) {
+            HDMIControl.setHDMIActive(true);
+        }
+        mediaPlayer = this;
 
         player = new ProcessExecutor(commands);
         if (async) {
@@ -86,7 +100,7 @@ public class MediaPlayer {
         killAllMplayer();
     }
 
-    public static void killAllOmxPlayer() throws IOException {
+    private static void killAllOmxPlayer() throws IOException {
         // killing already running players 
         List<String> commands = new ArrayList<>();
         commands.add("/usr/bin/killall");
@@ -96,7 +110,7 @@ public class MediaPlayer {
         killer.startExecutionNonBlocking();
     }
 
-    public static void killAllMplayer() throws IOException {
+    private static void killAllMplayer() throws IOException {
         // killing already running players 
         List<String> commands = new ArrayList<>();
         commands.add("/usr/bin/killall");
@@ -107,9 +121,9 @@ public class MediaPlayer {
     }
 
     public static void main(String args[]) throws IOException {
-        MediaPlayer mediaPlayer = new MediaPlayer(new File("/home/pi/AzhaikiraanMadhavan.mp3"));
-        mediaPlayer.play(true);
-        while (mediaPlayer.isPlaying()) {
+        MediaPlayer mediaPlayer1 = new MediaPlayer(new File("/home/pi/AzhaikiraanMadhavan.mp3"));
+        mediaPlayer1.play(true);
+        while (mediaPlayer1.isPlaying()) {
             System.out.println("Playing");
         }
     }
