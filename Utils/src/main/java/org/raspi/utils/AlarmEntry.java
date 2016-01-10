@@ -74,12 +74,12 @@ public class AlarmEntry implements Serializable {
         this.chosenMedia = chosenMedia;
     }
 
-//    public String getDisplayChosenMedia() {
-//        if (playList) {
-//            return "PLAYLIST";
-//        }
-//        return getChosenMedia();
-//    }
+    public String getDisplayChosenMedia() {
+        if (playList) {
+            return "PLAYLIST";
+        }
+        return getChosenMedia();
+    }
 
     public String[] getSelectedDays() {
         return selectedDays;

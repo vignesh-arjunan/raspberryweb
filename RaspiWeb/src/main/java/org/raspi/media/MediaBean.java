@@ -2,6 +2,8 @@ package org.raspi.media;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.FileStore;
 
 import java.nio.file.FileSystems;
@@ -27,6 +29,7 @@ import javax.inject.Named;
 import org.raspi.utils.Constants;
 import static org.raspi.utils.Constants.PARENT_MEDIA_DIR;
 import org.raspi.utils.FileValidator;
+import org.raspi.utils.HDMIControl;
 import org.raspi.utils.MediaPlayer;
 import org.raspi.utils.PlayYoutube;
 
@@ -42,7 +45,7 @@ public class MediaBean implements Runnable {
     private List<File> mediaFiles;
     private final ArrayBlockingQueue<File> playListQueue = new ArrayBlockingQueue<>(200);
     private final Thread playerThread = new Thread(this);
-    private boolean stopThread;
+    private boolean stopPlayerThread;
     private boolean repeat;
     private File selectedFile;
     private String currentlyPlaying;
@@ -217,13 +220,14 @@ public class MediaBean implements Runnable {
         }
     }
 
-    public void playFromURL() throws IOException {
-        stop();
+    public void playFromURL() throws IOException {        
         try {
-            String videoURL = PlayYoutube.read(youtubeURL);
+            String videoURL = PlayYoutube.read(youtubeURL.trim());
+            URI uri = new URI(videoURL);
+            stop();
             new Thread(() -> {
                 try {
-                    (mediaPlayer = new MediaPlayer(videoURL)).play(true);
+                    (mediaPlayer = new MediaPlayer(uri)).play(true);
                 } catch (IOException ex) {
                     Logger.getLogger(MediaBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -231,9 +235,9 @@ public class MediaBean implements Runnable {
         } catch (IllegalArgumentException illegalArgumentException) {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Input", "Youtube URL is not valid"));
-        } catch (Exception exception) {
+        } catch (IOException | URISyntaxException exception) {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Could not play", "Could not play from Youtube"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Could not play", "URL not accessible"));
         }
     }
 
@@ -285,14 +289,14 @@ public class MediaBean implements Runnable {
 
     @PostConstruct
     public void init() {
-//        playList = preferencesBean.getPreferences().getPlayList();
         loadMediaFiles();
         playerThread.start();
+        HDMIControl.setHDMIActive(false);
     }
 
     @PreDestroy
     public void stopPlayerThread() {
-        stopThread = true;
+        stopPlayerThread = true;
         try {
             stop();
         } catch (IOException ex) {
@@ -310,7 +314,7 @@ public class MediaBean implements Runnable {
     @Override
     public void run() {
         System.out.println("Starting Player Thread");
-        while (!stopThread) {
+        while (!stopPlayerThread) {
             try {
                 File file = playListQueue.take();
                 if (file.exists()) {

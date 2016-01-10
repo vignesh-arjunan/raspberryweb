@@ -27,15 +27,8 @@ public class FileUploadBean {
     public void handleFileUpload(FileUploadEvent event) throws IOException {
         FacesMessage message = new FacesMessage("Succesful", event.getFile().getFileName() + " is uploaded.");
         FacesContext.getCurrentInstance().addMessage(null, message);
-        // Do what you want with the file 
-        //try (InputStream inputStream = event.getFile().getInputstream()) {
-        System.out.println("1 --------------");
         copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
-        System.out.println("2 --------------");
-        //}
         mediaBean.loadMediaFiles();
-//        RequestContext.getCurrentInstance().update("mediaForm");
-//        RequestContext.getCurrentInstance().scrollTo("mediaForm");
     }
 
     public void copyFile(String fileName, InputStream in) throws IOException {
