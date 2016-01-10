@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 public class MediaPlayer {
 
     private File toBePlayed;
-    private URI videoURI;
+    private String videoURI;
     private ProcessExecutor player;
     private static MediaPlayer mediaPlayer;
 
@@ -33,7 +33,7 @@ public class MediaPlayer {
         toBePlayed = file;
     }
 
-    public MediaPlayer(URI videoURL) {
+    public MediaPlayer(String videoURL) {
         Objects.requireNonNull(videoURL, "videoURL cannot be null");
         this.videoURI = videoURL;
     }
@@ -77,7 +77,7 @@ public class MediaPlayer {
         if (toBePlayed != null) {
             commands.add(toBePlayed.getAbsolutePath());
         } else {
-            commands.add(videoURI.toString());
+            commands.add(videoURI);
         }
 
         commands.forEach(System.out::println);
