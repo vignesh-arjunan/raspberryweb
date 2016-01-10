@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -41,6 +42,15 @@ public class ClockBean {
     @Inject
     private MediaBean mediaBean;
     private MediaPlayer mediaPlayer;
+    private boolean addMode = true;
+
+    public boolean isAddMode() {
+        return addMode;
+    }
+
+    public void setAddMode(boolean addMode) {
+        this.addMode = addMode;
+    }
 
     public AlarmEntry getSelectedAlarmEntry() {
         return selectedAlarmEntry;
@@ -49,6 +59,7 @@ public class ClockBean {
     public void setSelectedAlarmEntry(AlarmEntry selectedAlarmEntry) {
         this.selectedAlarmEntry = selectedAlarmEntry;
         alarmEntry = new AlarmEntry();
+        setAddMode(false);
         if (selectedAlarmEntry != null) {
             alarmEntry.setAlarmTime(selectedAlarmEntry.getAlarmTime());
             alarmEntry.setChosenMedia(selectedAlarmEntry.getChosenMedia());
@@ -57,6 +68,25 @@ public class ClockBean {
             alarmEntry.setName(selectedAlarmEntry.getName());
             alarmEntry.setPlayList(selectedAlarmEntry.isPlayList());
             alarmEntry.setSelectedDays(selectedAlarmEntry.getSelectedDays());
+        }
+    }
+
+    public void handleRowSelect() {
+        setAddMode(false);
+    }
+    
+    public void handleRowUnselect() {
+        setAddMode(true);
+    }
+
+    public void clearSelection() {
+        if (selectedAlarmEntry != null) {
+            setSelectedAlarmEntry(null);
+            alarmEntry = new AlarmEntry();
+            setAddMode(true);
+        } else {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please select", "Please select an Alarm"));
         }
     }
 
@@ -107,7 +137,7 @@ public class ClockBean {
             }
         });
     }
-    
+
     @Schedule(second = "*", minute = "*", hour = "*", info = "HDMI Checker", persistent = false)
     public void secondTimeout() {
         // System.out.println("in second timeout");
@@ -115,7 +145,7 @@ public class ClockBean {
             // System.out.println("deactivating HDMI");
             HDMIControl.setHDMIActive(false);
         }
-    }    
+    }
 
     private boolean isAlarmDay(AlarmEntry alarmEntry) {
         LocalDate localDate = LocalDate.now();
@@ -126,13 +156,32 @@ public class ClockBean {
         alarmList.clear();
     }
 
-    public void addAlarm() {
+    public String getButtonLabel() {
+        if (isAddMode()) {
+            return "Add";
+        }
+        return "Edit";
+    }
+
+    public void addEditAlarm() {
         System.out.println("name " + alarmEntry.getName());
         System.out.println("alarmToSet " + alarmEntry.getAlarmTime());
         System.out.println("selectedDays " + Arrays.toString(alarmEntry.getSelectedDays()));
         System.out.println("chosenMedia " + alarmEntry.getChosenMedia());
         System.out.println("isPlayList() " + alarmEntry.isPlayList());
 
+        if (alarmEntry.getName() == null || alarmEntry.getName().trim().isEmpty()) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Alarm Name cannot be empty"));
+            return;
+        }
+        
+        if (alarmEntry.getSelectedDays() == null || alarmEntry.getSelectedDays().length == 0) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Alarm Day not selected"));
+            return;
+        }
+        
         if (!alarmEntry.isPlayList() && alarmEntry.getChosenMedia() == null) {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Media Not Chosen"));
@@ -141,13 +190,29 @@ public class ClockBean {
 
         alarmEntry.setAlarmTime(LocalTime.of(alarmEntry.getHours(), alarmEntry.getMins()));
 
-        if (checkAlarmConflict() || checkUniqueName()) {
+        if ((isAddMode()) && (checkAlarmConflict(alarmList, alarmEntry) || checkUniqueName())) {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Alarm time/name conflicting !!!"));
             return;
         }
 
-        alarmList.add(alarmEntry);
+        List<AlarmEntry> alarmListToCheck = new ArrayList<>(alarmList);
+        alarmListToCheck.remove(alarmEntry);
+        if ((!isAddMode()) && (checkAlarmConflict(alarmListToCheck, alarmEntry))) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Alarm time conflicting !!!"));
+            return;
+        }
+
+        if (isAddMode()) {
+            alarmList.add(alarmEntry);
+        } else {
+            int index = alarmList.indexOf(alarmEntry);
+            alarmList.remove(index);
+            alarmList.add(index, alarmEntry);
+            clearSelection();
+        }
+
         setAlarmEntry(new AlarmEntry());
     }
 
@@ -155,19 +220,18 @@ public class ClockBean {
         return alarmList.stream().anyMatch((AlarmEntry entry) -> entry.getName().equals(alarmEntry.getName()));
     }
 
-    private boolean checkAlarmConflict() {
-        return alarmList.stream()
+    private static boolean checkAlarmConflict(List<AlarmEntry> alarmListToCheck, AlarmEntry alarmEntryToCheck) {
+        return alarmListToCheck.stream()
                 .filter((AlarmEntry entry)
-                        -> Arrays.asList(alarmEntry.getSelectedDays()).stream().anyMatch((day1) -> (Arrays.asList(entry.getSelectedDays()).stream().anyMatch((day2) -> (day1.equals(day2))))))
+                        -> Arrays.asList(alarmEntryToCheck.getSelectedDays()).stream().anyMatch((day1) -> (Arrays.asList(entry.getSelectedDays()).stream().anyMatch((day2) -> (day1.equals(day2))))))
                 .filter((AlarmEntry entry)
-                        -> alarmEntry.getAlarmTime().equals(entry.getAlarmTime()))
+                        -> alarmEntryToCheck.getAlarmTime().equals(entry.getAlarmTime()))
                 .findAny().isPresent();
     }
 
-    public void clearAlarm() {
-        setAlarmEntry(new AlarmEntry());
-    }
-
+//    public void clearAlarm() {
+//        setAlarmEntry(new AlarmEntry());
+//    }
     public void saveAlarmList() throws IOException {
         preferencesBean.getPreferences().setAlarmList(alarmList);
         preferencesBean.savePreferences();

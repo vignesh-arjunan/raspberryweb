@@ -121,7 +121,7 @@
                         <h:form id="alarmForm">
                             <h:panelGrid columns="2" cellpadding="5">
                                 <p:outputLabel for="name" value="Name:" />
-                                <p:inputText id="name" value="#{clockBean.alarmEntry.name}" required="true" requiredMessage="Name is needed" />
+                                <p:inputText id="name" value="#{clockBean.alarmEntry.name}" disabled="#{!clockBean.addMode}" />
 
                                 <p:outputLabel value="Hours : " />
                                 <p:selectOneMenu id="hrs" value="#{clockBean.alarmEntry.hours}" style="width:50px">
@@ -160,11 +160,11 @@
                                 </p:selectOneMenu>
 
                                 <p:outputLabel for="day" value="Day : " />
-                                <p:selectManyCheckbox id="day" value="#{clockBean.alarmEntry.selectedDays}" layout="grid" columns="1" required="true" requiredMessage="Day is needed">                                                               
+                                <p:selectManyCheckbox id="day" value="#{clockBean.alarmEntry.selectedDays}" layout="grid" columns="1">                                                               
                                     <f:selectItems value="#{clockBean.allDays}" var="day" itemLabel="#{day}" itemValue="#{day}" />
                                 </p:selectManyCheckbox>        
 
-                                <p:outputLabel for="chooseMedia" value="Media : " />
+                                <p:outputLabel for="chooseMedia" value="Play Media : " />
                                 <p:selectOneMenu id="chooseMedia" value="#{clockBean.alarmEntry.chosenMedia}" disabled="#{clockBean.alarmEntry.playList}" style="width:600px">
                                     <f:selectItems value="#{mediaBean.mediaFileNames}" />
                                 </p:selectOneMenu>
@@ -173,15 +173,18 @@
                                 <p:selectBooleanCheckbox value="#{clockBean.alarmEntry.playList}">
                                     <p:ajax update="chooseMedia" />
                                 </p:selectBooleanCheckbox>
-                                <p:commandButton value="Add" actionListener="#{clockBean.addAlarm()}" update="messages1,:tabView:accordionPanel2:alarmForm,:tabView:accordionPanel2:alarmListForm" />
-                                <p:commandButton value="Clear" actionListener="#{clockBean.clearAlarm()}" process="@form" update="messages1,:tabView:accordionPanel2:alarmForm,:tabView:accordionPanel2:alarmListForm" />
+                                
+                                <p:spacer width="5" />
+                                <p:commandButton value="#{clockBean.buttonLabel}" actionListener="#{clockBean.addEditAlarm()}" update="messages1,:tabView:accordionPanel2:alarmForm,:tabView:accordionPanel2:alarmListForm" />
+                                
                                 <p:growl id="messages1" showDetail="true" />
                             </h:panelGrid>
                         </h:form>
                         <h:form id="alarmListForm">
                             <br/>
                             <p:dataTable id="alarmTable" var="alarm" value="#{clockBean.alarmList}" selectionMode="single" selection="#{clockBean.selectedAlarmEntry}" rowKey="#{alarm.name}">
-                                <p:ajax event="rowSelect" update=":tabView:accordionPanel2:alarmForm" />
+                                <p:ajax event="rowSelect" listener="#{clockBean.handleRowSelect()}" update=":tabView:accordionPanel2:alarmForm" />
+                                <p:ajax event="rowUnselect" listener="#{clockBean.handleRowUnselect()}" update=":tabView:accordionPanel2:alarmForm" />
                                 <p:column headerText="Name" style="width:25px;text-align: center" sortBy="#{alarm.name}">
                                     <h:outputText value="#{alarm.name}" />
                                 </p:column>
@@ -203,6 +206,7 @@
                                     <p:commandButton value="Remove Alarm" actionListener="#{clockBean.deleteAlarm()}" update=":tabView:accordionPanel2:alarmListForm,:tabView:accordionPanel2:alarmForm" />
                                     <p:commandButton value="Activate Alarm" actionListener="#{clockBean.activateAlarm()}" update=":tabView:accordionPanel2:alarmListForm,:tabView:accordionPanel2:alarmForm" />
                                     <p:commandButton value="De-Activate Alarm" actionListener="#{clockBean.deActivateAlarm()}" update=":tabView:accordionPanel2:alarmListForm,:tabView:accordionPanel2:alarmForm" />
+                                    <p:commandButton value="Clear Selection" actionListener="#{clockBean.clearSelection()}" update=":tabView:accordionPanel2:alarmListForm,:tabView:accordionPanel2:alarmForm" />
                                 </f:facet>
                             </p:dataTable>
                             <br/>
