@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.raspi.timer.PreferencesBean;
 import static org.raspi.utils.Constants.PARENT_MEDIA_DIR;
+import org.raspi.utils.HDMIControl;
 import org.raspi.utils.MediaPlayer;
 
 /**
@@ -106,6 +107,15 @@ public class ClockBean {
             }
         });
     }
+    
+    @Schedule(second = "*", minute = "*", hour = "*", info = "HDMI Checker", persistent = false)
+    public void secondTimeout() {
+        // System.out.println("in second timeout");
+        if (!MediaPlayer.isPlayingVideo()) {
+            // System.out.println("deactivating HDMI");
+            HDMIControl.setHDMIActive(false);
+        }
+    }    
 
     private boolean isAlarmDay(AlarmEntry alarmEntry) {
         LocalDate localDate = LocalDate.now();
