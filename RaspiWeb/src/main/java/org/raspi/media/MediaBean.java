@@ -29,7 +29,6 @@ import javax.inject.Named;
 import org.raspi.utils.Constants;
 import static org.raspi.utils.Constants.PARENT_MEDIA_DIR;
 import org.raspi.utils.FileValidator;
-import org.raspi.utils.HDMIControl;
 import org.raspi.utils.MediaPlayer;
 import org.raspi.utils.PlayYoutube;
 
@@ -290,7 +289,6 @@ public class MediaBean implements Runnable {
     public void init() {
         loadMediaFiles();
         playerThread.start();
-        HDMIControl.setHDMIActive(false);
     }
 
     @PreDestroy
@@ -329,7 +327,7 @@ public class MediaBean implements Runnable {
 
             currentlyPlaying = null;
 
-            if (repeat && playListQueue.size() == 0) {
+            if (repeat && playListQueue.isEmpty()) {
                 playListQueue.addAll(playListBean.getPlayList());
             }
 
