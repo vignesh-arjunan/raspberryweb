@@ -43,6 +43,7 @@ public class ClockBean {
     private MediaBean mediaBean;
     private MediaPlayer mediaPlayer;
     private boolean addMode = true;
+    private boolean isVideoPlaying = false;
 
     public boolean isAddMode() {
         return addMode;
@@ -74,7 +75,7 @@ public class ClockBean {
     public void handleRowSelect() {
         setAddMode(false);
     }
-    
+
     public void handleRowUnselect() {
         setAddMode(true);
     }
@@ -109,6 +110,7 @@ public class ClockBean {
     @PostConstruct
     void init() {
         alarmList = preferencesBean.getPreferences().getAlarmList();
+        HDMIControl.setHDMIActive(false);
     }
 
     @PreDestroy
@@ -141,10 +143,23 @@ public class ClockBean {
     @Schedule(second = "*", minute = "*", hour = "*", info = "HDMI Checker", persistent = false)
     public void secondTimeout() {
         // System.out.println("in second timeout");
-        if (!MediaPlayer.isPlayingVideo()) {
-            // System.out.println("deactivating HDMI");
-            HDMIControl.setHDMIActive(false);
+
+        if (MediaPlayer.isPlayingVideo() && !isVideoPlaying) {
+            isVideoPlaying = true;
+            HDMIControl.setHDMIActive(isVideoPlaying);
+        } else if (!MediaPlayer.isPlayingVideo() && isVideoPlaying) {
+            isVideoPlaying = false;
+            HDMIControl.setHDMIActive(isVideoPlaying);
+        } else {
+            // do nothing
         }
+
+//        if (!MediaPlayer.isPlayingVideo()) {
+//            // System.out.println("deactivating HDMI");
+//            HDMIControl.setHDMIActive(false);
+//        } else {
+//            HDMIControl.setHDMIActive(true);
+//        }
     }
 
     private boolean isAlarmDay(AlarmEntry alarmEntry) {
@@ -175,13 +190,13 @@ public class ClockBean {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Alarm Name cannot be empty"));
             return;
         }
-        
+
         if (alarmEntry.getSelectedDays() == null || alarmEntry.getSelectedDays().length == 0) {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Alarm Day not selected"));
             return;
         }
-        
+
         if (!alarmEntry.isPlayList() && alarmEntry.getChosenMedia() == null) {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Media Not Chosen"));
