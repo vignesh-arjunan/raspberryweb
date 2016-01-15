@@ -33,4 +33,8 @@ public class Constants {
     public static final String TEMPERATURE_TOPIC = "temperature_topic";
     public static final String HUMIDITY_TOPIC = "humidity_topic";
     public static final String MOTION_TOPIC = "motion_topic";
+    public static final String SOURCE = "https://bitbucket.org/vignesh_arjunan/raspberryweb/downloads/RaspiWeb.war";
+    public static final File DESTINATION = new File("/etc/glassfish4/glassfish/domains/domain1/autodeploy/RaspiWeb.war");
+//    public static final File DESTINATION = new File("/Users/vignesh/RaspiWeb.war");    
+    public static final File TEMP = new File("/tmp/RaspiWeb.war");
 }

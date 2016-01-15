@@ -140,7 +140,7 @@ public class ClockBean {
         });
     }
 
-    @Schedule(second = "*", minute = "*", hour = "*", info = "HDMI Checker", persistent = false)
+//    @Schedule(second = "*", minute = "*", hour = "*", info = "HDMI Checker", persistent = false)
     public void secondTimeout() {
         // System.out.println("in second timeout");
 
@@ -154,12 +154,6 @@ public class ClockBean {
             // do nothing
         }
 
-//        if (!MediaPlayer.isPlayingVideo()) {
-//            // System.out.println("deactivating HDMI");
-//            HDMIControl.setHDMIActive(false);
-//        } else {
-//            HDMIControl.setHDMIActive(true);
-//        }
     }
 
     private boolean isAlarmDay(AlarmEntry alarmEntry) {
@@ -173,9 +167,9 @@ public class ClockBean {
 
     public String getButtonLabel() {
         if (isAddMode()) {
-            return "Add";
+            return "Add Alarm";
         }
-        return "Edit";
+        return "Edit Alarm";
     }
 
     public void addEditAlarm() {

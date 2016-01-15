@@ -11,7 +11,7 @@ import javax.mail.MessagingException;
  *
  * @author vignesh
  */
-public class CheckNetworkAndRebootOrUpdate {
+public class CheckNetworkAndRebootOrNotify {
 
     public static void check(String msg, String email, String password, SendEmail.MailProvider mailProvider) throws IOException, MessagingException {
         // create the ping command as a list of strings
@@ -27,8 +27,8 @@ public class CheckNetworkAndRebootOrUpdate {
             commands = new ArrayList<>();
             commands.add("/usr/bin/sudo");
             commands.add("/sbin/reboot");
-            ProcessExecutor shutdown = new ProcessExecutor(commands);
-            Flags shutdownFlags = shutdown.startExecution();
+            ProcessExecutor reboot = new ProcessExecutor(commands);
+            Flags shutdownFlags = reboot.startExecution();
             System.out.println("shutdownFlags.isReadError() " + shutdownFlags.isReadError());
         } else {
             commands = new ArrayList<>();
@@ -40,6 +40,13 @@ public class CheckNetworkAndRebootOrUpdate {
         }
     }
 
-    public CheckNetworkAndRebootOrUpdate() {
+    public static void reboot() throws IOException {
+        List<String> commands = new ArrayList<>();
+        commands = new ArrayList<>();
+        commands.add("/usr/bin/sudo");
+        commands.add("/sbin/reboot");
+        ProcessExecutor reboot = new ProcessExecutor(commands);
+        Flags shutdownFlags = reboot.startExecution();
+        System.out.println("shutdownFlags.isReadError() " + shutdownFlags.isReadError());
     }
 }

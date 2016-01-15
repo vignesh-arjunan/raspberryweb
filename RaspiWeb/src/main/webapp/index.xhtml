@@ -105,8 +105,11 @@
                             <h:panelGrid columns="2" cellpadding="5">
                                 <p:outputLabel for="name" value="Shareable Youtube link :" />
                                 <p:inputText id="name" value="#{mediaBean.youtubeURL}" required="true" requiredMessage="URL is needed" size="30" />           
-                                <p:commandButton value="Play" actionListener="#{mediaBean.playFromURL()}" update="messages1,:tabView:accordionPanel1:youtubeForm" />
-                                <p:commandButton value="Reset" actionListener="#{mediaBean.clearYoutubeURL()}" update="youtubeForm" />
+                                <p:spacer />
+                                <h:panelGrid columns="2" cellpadding="5">
+                                    <p:commandButton value="Play" actionListener="#{mediaBean.playFromURL()}" update="messages1,:tabView:accordionPanel1:youtubeForm" />
+                                    <p:commandButton value="Reset" actionListener="#{mediaBean.clearYoutubeURL()}" update="youtubeForm" />
+                                </h:panelGrid>
                                 <p:growl id="messages1" showDetail="true" />
                             </h:panelGrid>
                         </h:form>
@@ -119,66 +122,72 @@
                 <p:tabView id="accordionPanel2">
                     <p:tab title="Alarm" style="margin-bottom:20px">
                         <h:form id="alarmForm">
-                            <h:panelGrid columns="2" cellpadding="5">
-                                <p:outputLabel for="name" value="Name:" />
-                                <p:inputText id="name" value="#{clockBean.alarmEntry.name}" disabled="#{!clockBean.addMode}" />
+                            <p:fieldset legend="Alarm Time Settings" style="margin-bottom:20px">
+                                <h:panelGrid columns="2" cellpadding="5">
+                                    <p:outputLabel for="name" value="Name :" />
+                                    <p:inputText id="name" value="#{clockBean.alarmEntry.name}" disabled="#{!clockBean.addMode}" />
 
-                                <p:outputLabel value="Hours : " />
-                                <p:selectOneMenu id="hrs" value="#{clockBean.alarmEntry.hours}" style="width:50px">
-                                    <f:selectItem itemLabel="00" itemValue="00" />
-                                    <f:selectItem itemLabel="01" itemValue="01" />
-                                    <f:selectItem itemLabel="02" itemValue="02" />
-                                    <f:selectItem itemLabel="03" itemValue="03" />
-                                    <f:selectItem itemLabel="04" itemValue="04" />
-                                    <f:selectItem itemLabel="05" itemValue="05" />
-                                    <f:selectItem itemLabel="06" itemValue="06" />
-                                    <f:selectItem itemLabel="07" itemValue="07" />
-                                    <f:selectItem itemLabel="08" itemValue="08" />
-                                    <f:selectItem itemLabel="09" itemValue="09" />
-                                    <f:selectItem itemLabel="10" itemValue="10" />
-                                    <f:selectItem itemLabel="11" itemValue="11" />
-                                    <f:selectItem itemLabel="12" itemValue="12" />
-                                    <f:selectItem itemLabel="13" itemValue="13" />
-                                    <f:selectItem itemLabel="14" itemValue="14" />
-                                    <f:selectItem itemLabel="15" itemValue="15" />
-                                    <f:selectItem itemLabel="16" itemValue="16" />
-                                    <f:selectItem itemLabel="17" itemValue="17" />
-                                    <f:selectItem itemLabel="18" itemValue="18" />
-                                    <f:selectItem itemLabel="19" itemValue="19" />
-                                    <f:selectItem itemLabel="20" itemValue="20" />
-                                    <f:selectItem itemLabel="21" itemValue="21" />                                                                                
-                                    <f:selectItem itemLabel="22" itemValue="22" />
-                                    <f:selectItem itemLabel="23" itemValue="23" />
-                                </p:selectOneMenu>
+                                    <p:outputLabel value="Hours : " />
+                                    <p:selectOneMenu id="hrs" value="#{clockBean.alarmEntry.hours}" >
+                                        <f:selectItem itemLabel="00" itemValue="00" />
+                                        <f:selectItem itemLabel="01" itemValue="01" />
+                                        <f:selectItem itemLabel="02" itemValue="02" />
+                                        <f:selectItem itemLabel="03" itemValue="03" />
+                                        <f:selectItem itemLabel="04" itemValue="04" />
+                                        <f:selectItem itemLabel="05" itemValue="05" />
+                                        <f:selectItem itemLabel="06" itemValue="06" />
+                                        <f:selectItem itemLabel="07" itemValue="07" />
+                                        <f:selectItem itemLabel="08" itemValue="08" />
+                                        <f:selectItem itemLabel="09" itemValue="09" />
+                                        <f:selectItem itemLabel="10" itemValue="10" />
+                                        <f:selectItem itemLabel="11" itemValue="11" />
+                                        <f:selectItem itemLabel="12" itemValue="12" />
+                                        <f:selectItem itemLabel="13" itemValue="13" />
+                                        <f:selectItem itemLabel="14" itemValue="14" />
+                                        <f:selectItem itemLabel="15" itemValue="15" />
+                                        <f:selectItem itemLabel="16" itemValue="16" />
+                                        <f:selectItem itemLabel="17" itemValue="17" />
+                                        <f:selectItem itemLabel="18" itemValue="18" />
+                                        <f:selectItem itemLabel="19" itemValue="19" />
+                                        <f:selectItem itemLabel="20" itemValue="20" />
+                                        <f:selectItem itemLabel="21" itemValue="21" />                                                                                
+                                        <f:selectItem itemLabel="22" itemValue="22" />
+                                        <f:selectItem itemLabel="23" itemValue="23" />
+                                    </p:selectOneMenu>
 
-                                <p:outputLabel value="Minutes : " />
-                                <p:selectOneMenu id="mins" value="#{clockBean.alarmEntry.mins}" style="width:50px">
-                                    <f:selectItem itemLabel="00" itemValue="00" />
-                                    <f:selectItem itemLabel="15" itemValue="15" />
-                                    <f:selectItem itemLabel="30" itemValue="30" />
-                                    <f:selectItem itemLabel="45" itemValue="45" />
-                                </p:selectOneMenu>
+                                    <p:outputLabel value="Minutes : " />
+                                    <p:selectOneMenu id="mins" value="#{clockBean.alarmEntry.mins}" >
+                                        <f:selectItem itemLabel="00" itemValue="00" />
+                                        <f:selectItem itemLabel="15" itemValue="15" />
+                                        <f:selectItem itemLabel="30" itemValue="30" />
+                                        <f:selectItem itemLabel="45" itemValue="45" />
+                                    </p:selectOneMenu>
 
-                                <p:outputLabel for="day" value="Day : " />
-                                <p:selectManyCheckbox id="day" value="#{clockBean.alarmEntry.selectedDays}" layout="grid" columns="1">                                                               
-                                    <f:selectItems value="#{clockBean.allDays}" var="day" itemLabel="#{day}" itemValue="#{day}" />
-                                </p:selectManyCheckbox>        
+                                    <p:outputLabel for="day" value="Day : " />
+                                    <p:selectManyCheckbox id="day" value="#{clockBean.alarmEntry.selectedDays}" layout="grid" columns="1">                                                               
+                                        <f:selectItems value="#{clockBean.allDays}" var="day" itemLabel="#{day}" itemValue="#{day}" />
+                                    </p:selectManyCheckbox>        
 
-                                <p:outputLabel for="chooseMedia" value="Play Media : " />
-                                <p:selectOneMenu id="chooseMedia" value="#{clockBean.alarmEntry.chosenMedia}" disabled="#{clockBean.alarmEntry.playList}" style="width:600px">
-                                    <f:selectItems value="#{mediaBean.mediaFileNames}" />
-                                </p:selectOneMenu>
+                                </h:panelGrid>
+                            </p:fieldset>
 
-                                <p:outputLabel value="Play PlayList : " />
-                                <p:selectBooleanCheckbox value="#{clockBean.alarmEntry.playList}">
-                                    <p:ajax update="chooseMedia" />
-                                </p:selectBooleanCheckbox>
-                                
-                                <p:spacer width="5" />
-                                <p:commandButton value="#{clockBean.buttonLabel}" actionListener="#{clockBean.addEditAlarm()}" update="messages1,:tabView:accordionPanel2:alarmForm,:tabView:accordionPanel2:alarmListForm" />
-                                
-                                <p:growl id="messages1" showDetail="true" />
-                            </h:panelGrid>
+                            <p:fieldset legend="Alarm Media Settings" style="margin-bottom:20px">
+                                <h:panelGrid columns="2" cellpadding="5">                            
+
+                                    <p:outputLabel for="chooseMedia" value="Play Media : " />
+                                    <p:selectOneMenu id="chooseMedia" value="#{clockBean.alarmEntry.chosenMedia}" disabled="#{clockBean.alarmEntry.playList}" >
+                                        <f:selectItems value="#{mediaBean.mediaFileNames}" />
+                                    </p:selectOneMenu>
+
+                                    <p:outputLabel value="Play PlayList : " />
+                                    <p:selectBooleanCheckbox value="#{clockBean.alarmEntry.playList}">
+                                        <p:ajax update="chooseMedia" />
+                                    </p:selectBooleanCheckbox>
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <p:commandButton value="#{clockBean.buttonLabel}" actionListener="#{clockBean.addEditAlarm()}" update="messages1,:tabView:accordionPanel2:alarmForm,:tabView:accordionPanel2:alarmListForm" />
+
+                            <p:growl id="messages1" showDetail="true" />
                         </h:form>
                         <h:form id="alarmListForm">
                             <br/>
@@ -228,45 +237,51 @@
                             </h:panelGrid>
                         </h:form>
                     </p:tab>
-                    <p:tab title="Preferences" style="margin-bottom:20px">
+                    <p:tab title="Preferences" style="margin-bottom:20px">                        
                         <h:form id="preferencesForm">
-                            <h:panelGrid columns="2" cellpadding="5">
-                                <p:outputLabel value="Start Motion Detection on Startup :" />
-                                <p:selectBooleanCheckbox value="#{motionBean.startMotionOnStartup}">
-                                    <p:ajax />
-                                </p:selectBooleanCheckbox>
-                                <p:outputLabel value="Status Message : " />
-                                <p:inputText value="#{notificationBean.notificationMsg}" />
-                                <p:outputLabel value="Send Status Every : " />
-                                <p:selectOneButton id="selection" value="#{notificationBean.when}">
-                                    <f:selectItem itemLabel="Never" itemValue="-1" />
-                                    <f:selectItem itemLabel="15 mins" itemValue="15" />
-                                    <f:selectItem itemLabel="30 mins" itemValue="30" />
-                                    <f:selectItem itemLabel="1 hour" itemValue="0" />
-                                    <p:ajax update=":tabView:accordionPanel3:preferencesForm:selection" />
-                                </p:selectOneButton>
-                                <p:outputLabel value="Email Provider : " />
-                                <p:selectOneButton id="providerSelection" value="#{notificationBean.mailProvider}">
-                                    <f:selectItem itemLabel="GOOGLE" itemValue="#{notificationBean.google}"/>
-                                    <f:selectItem itemLabel="YAHOO" itemValue="#{notificationBean.yahoo}"/>
-                                    <f:selectItem itemLabel="MICROSOFT" itemValue="#{notificationBean.microsoft}"/>
-                                    <p:ajax update=":tabView:accordionPanel3:preferencesForm:providerSelection" />
-                                </p:selectOneButton>
-                                <p:outputLabel value="Full Email ID : " />
-                                <p:inputText value="#{notificationBean.email}" />
-                                <p:outputLabel value="Password : " />
-                                <p:password value="#{notificationBean.password}" />                                                            
-                                <p:outputLabel value="Email Event Start :" />
-                                <p:selectBooleanCheckbox value="#{watcherBean.notifyEventStart}">
-                                    <p:ajax />
-                                </p:selectBooleanCheckbox>
-                                <p:outputLabel value="Email Attachment &amp; Delete :" />
-                                <p:selectBooleanCheckbox value="#{watcherBean.notifyAttachment}">
-                                    <p:ajax />
-                                </p:selectBooleanCheckbox>                          
-                                <p:commandButton value="Save Preferences" actionListener="#{notificationBean.savePreferences()}" update="messages5" />
-                                <p:growl id="messages5" showDetail="true" />
-                            </h:panelGrid>
+                            <p:fieldset legend="Email Notification Settings" style="margin-bottom:20px">
+                                <h:panelGrid columns="2" cellpadding="5">                                
+                                    <p:outputLabel value="Status Message : " />
+                                    <p:inputText value="#{notificationBean.notificationMsg}" />
+                                    <p:outputLabel value="Send Status Every : " />
+                                    <p:selectOneButton id="selection" value="#{notificationBean.when}">
+                                        <f:selectItem itemLabel="Never" itemValue="-1" />
+                                        <f:selectItem itemLabel="15 mins" itemValue="15" />
+                                        <f:selectItem itemLabel="30 mins" itemValue="30" />
+                                        <f:selectItem itemLabel="1 hour" itemValue="0" />
+                                        <p:ajax update=":tabView:accordionPanel3:preferencesForm:selection" />
+                                    </p:selectOneButton>
+                                    <p:outputLabel value="Email Provider : " />
+                                    <p:selectOneButton id="providerSelection" value="#{notificationBean.mailProvider}">
+                                        <f:selectItem itemLabel="GOOGLE" itemValue="#{notificationBean.google}"/>
+                                        <f:selectItem itemLabel="YAHOO" itemValue="#{notificationBean.yahoo}"/>
+                                        <f:selectItem itemLabel="MICROSOFT" itemValue="#{notificationBean.microsoft}"/>
+                                        <p:ajax update=":tabView:accordionPanel3:preferencesForm:providerSelection" />
+                                    </p:selectOneButton>
+                                    <p:outputLabel value="Full Email ID : " />
+                                    <p:inputText value="#{notificationBean.email}" />
+                                    <p:outputLabel value="Password : " />
+                                    <p:password value="#{notificationBean.password}" />                                      
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <p:fieldset legend="Motion Notification Settings" style="margin-bottom:20px">
+                                <h:panelGrid columns="2" cellpadding="5">                                
+                                    <p:outputLabel value="Start Motion Detection on Startup :" />
+                                    <p:selectBooleanCheckbox value="#{motionBean.startMotionOnStartup}">
+                                        <p:ajax />
+                                    </p:selectBooleanCheckbox>
+                                    <p:outputLabel value="Email Event Start :" />
+                                    <p:selectBooleanCheckbox value="#{watcherBean.notifyEventStart}">
+                                        <p:ajax />
+                                    </p:selectBooleanCheckbox>
+                                    <p:outputLabel value="Email Attachment &amp; Delete :" />
+                                    <p:selectBooleanCheckbox value="#{watcherBean.notifyAttachment}">
+                                        <p:ajax />
+                                    </p:selectBooleanCheckbox>     
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <p:commandButton value="Save Preferences" actionListener="#{notificationBean.savePreferences()}" update="messages5" />
+                            <p:growl id="messages5" showDetail="true" />
                         </h:form>
                     </p:tab>
 
@@ -316,20 +331,44 @@
 
                             <p:tab title="Emailing Error Log" style="margin-bottom:20px">
                                 <h:form id="errorForm">
-                                    <h:panelGrid columns="3" cellpadding="5">
-                                        <p:commandButton value="Refresh" update="errors" />
-                                        <p:commandButton value="Clear" actionListener="#{watcherBean.clearErrors()}" update="errors" />
-                                        <p:dataList id="errors" value="#{watcherBean.errors}" var="error" type="ordered">
-                                            <f:facet name="header">
-                                                Errors
-                                            </f:facet>
-                                            #{error.toString()}
-                                        </p:dataList>
-                                    </h:panelGrid>
+                                    <p:dataTable id="errors" var="error" value="#{watcherBean.errors}">
+                                        <f:facet name="header">
+                                            <p:commandButton value="Refresh" update="errors" />
+                                            <p:commandButton value="Clear" actionListener="#{watcherBean.clearErrors()}" update="errors" />
+                                        </f:facet>
+                                        <p:column headerText="Error" style="width:100px;text-align: center">
+                                            <h:outputText value="#{error.toString}" />
+                                        </p:column>
+                                        <f:facet name="footer">
+                                            <p:commandButton value="Refresh" update="errors" />
+                                            <p:commandButton value="Clear" actionListener="#{watcherBean.clearErrors()}" update="errors" />
+                                        </f:facet>
+                                    </p:dataTable>                                        
                                 </h:form>
                             </p:tab>
 
                         </p:tabView>
+                    </p:tab>
+                </p:tabView>
+            </p:tab>
+
+            <p:tab title="Update">
+                <p:tabView id="accordionPanel5">
+                    <p:tab title="Software Update Manager" style="margin-bottom:20px">
+                        <h:form id="updateForm">
+                            <h:panelGrid columns="3" cellpadding="5">
+                                <p:outputLabel value="Update Software Automatically :" />
+                                <p:selectBooleanCheckbox value="#{updateBean.updateSoftwareAutomatically}">
+                                    <p:ajax />
+                                </p:selectBooleanCheckbox>
+                                <p:spacer />
+
+                                <p:commandButton value="Save Preferences" actionListener="#{updateBean.savePreferences()}" update="messages1,:tabView:accordionPanel5:updateForm" />
+                                <p:commandButton value="Check For Updates" actionListener="#{updateBean.checkUpdateAvailable()}" update="messages1,:tabView:accordionPanel5:updateForm" />
+                                <p:commandButton value="Update Software &amp; Reboot" disabled="#{!updateBean.updateAvailable}" actionListener="#{updateBean.updateSoftware()}" update="messages1,:tabView:accordionPanel5:updateForm" />
+                                <p:growl id="messages1" showDetail="true" />
+                            </h:panelGrid>
+                        </h:form>                        
                     </p:tab>
                 </p:tabView>
             </p:tab>
