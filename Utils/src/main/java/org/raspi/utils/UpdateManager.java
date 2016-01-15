@@ -18,6 +18,8 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static org.raspi.utils.Constants.DESTINATION;
 import static org.raspi.utils.Constants.SOURCE;
 import static org.raspi.utils.Constants.TEMP;
@@ -60,7 +62,7 @@ public class UpdateManager {
         System.out.println("isUpdateAvailable " + isUpdateAvailable);
     }
 
-    public void update(Consumer<Integer> progress) throws IOException, MalformedURLException, FileNotFoundException {
+    public void update(Consumer<Integer> progress) throws IOException, MalformedURLException, FileNotFoundException, InterruptedException {
         if (!isUpdateAvailable) {
             throw new IllegalStateException("Update not available !!!");
         }
@@ -77,6 +79,8 @@ public class UpdateManager {
             }
         }
         System.out.println("total " + totalDownloaded);
+        Files.delete(destination.toPath());
+        Thread.sleep(9000); // waiting for undeployment
         Files.move(temp.toPath(), destination.toPath(), StandardCopyOption.ATOMIC_MOVE);
         System.out.println("Finished");
     }
@@ -91,9 +95,8 @@ public class UpdateManager {
                 if (updateManager.isUpdateAvailable()) {
                     updateManager.update(System.out::println);
                 }
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            } catch (IOException | InterruptedException ex) {
+                Logger.getLogger(UpdateManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
 
