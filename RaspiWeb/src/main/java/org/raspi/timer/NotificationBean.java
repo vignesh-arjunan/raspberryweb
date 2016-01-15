@@ -18,7 +18,7 @@ import org.raspi.utils.SendEmail;
 import org.raspi.utils.SendEmail.MailProvider;
 import org.raspi.motion.WatcherBean;
 import org.raspi.sensor.TemperatureHumidityBean;
-import org.raspi.utils.CheckNetworkAndRebootOrUpdate;
+import org.raspi.utils.CheckNetworkAndRebootOrNotify;
 
 /**
  *
@@ -134,7 +134,7 @@ public class NotificationBean {
         if (Integer.parseInt(when) == 15 && preferencesBean.getPreferences().isEmailPassswordVerified()) {
             watcherBean.pushNotification(() -> {
                 try {
-                    CheckNetworkAndRebootOrUpdate.check(temperaureHumidityBean.generateNotificationMsg(notificationMsg), email, password, mailProvider);
+                    CheckNetworkAndRebootOrNotify.check(temperaureHumidityBean.generateNotificationMsg(notificationMsg), email, password, mailProvider);
                 } catch (MessagingException | IOException ex) {
                     Logger.getLogger(NotificationBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -147,7 +147,7 @@ public class NotificationBean {
         if (Integer.parseInt(when) == 30 && preferencesBean.getPreferences().isEmailPassswordVerified()) {
             watcherBean.pushNotification(() -> {
                 try {
-                    CheckNetworkAndRebootOrUpdate.check(temperaureHumidityBean.generateNotificationMsg(notificationMsg), email, password, mailProvider);
+                    CheckNetworkAndRebootOrNotify.check(temperaureHumidityBean.generateNotificationMsg(notificationMsg), email, password, mailProvider);
                 } catch (MessagingException | IOException ex) {
                     Logger.getLogger(NotificationBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -160,7 +160,7 @@ public class NotificationBean {
         if (Integer.parseInt(when) == 0 && preferencesBean.getPreferences().isEmailPassswordVerified()) {
             watcherBean.pushNotification(() -> {
                 try {
-                    CheckNetworkAndRebootOrUpdate.check(temperaureHumidityBean.generateNotificationMsg(notificationMsg), email, password, mailProvider);
+                    CheckNetworkAndRebootOrNotify.check(temperaureHumidityBean.generateNotificationMsg(notificationMsg), email, password, mailProvider);
                 } catch (MessagingException | IOException ex) {
                     Logger.getLogger(NotificationBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
