@@ -19,14 +19,23 @@ public class Preferences implements Serializable {
     private List<AlarmEntry> alarmList = new ArrayList<>();
     private String notificationWhen = "-1";
     private String notificationMsg = "I am up !!";
-    private MailProvider mailProvider = MailProvider.YAHOO;
+    private MailProvider mailProvider = MailProvider.GOOGLE;
     private String email = "";
     private String password = "";
     private boolean emailPassswordVerified;
     private boolean startMotionOnStartup;
     private boolean notifyEventStart;
     private boolean notifyAttachment;
+    private boolean updateSoftwareAutomatically;
 
+    public boolean isUpdateSoftwareAutomatically() {
+        return updateSoftwareAutomatically;
+    }
+
+    public void setUpdateSoftwareAutomatically(boolean updateSoftwareAutomatically) {
+        this.updateSoftwareAutomatically = updateSoftwareAutomatically;
+    }       
+    
     public String getNotificationMsg() {
         return notificationMsg;
     }
