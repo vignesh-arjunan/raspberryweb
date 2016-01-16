@@ -1,6 +1,8 @@
 package org.raspi.update;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -66,7 +68,14 @@ public class UpdateBean {
 
     @PreDestroy
     void destroy() {
-
+        if (updateInProgress) { // deploying lastest when update was triggered
+            try {
+                Files.move(TEMP.toPath(), DESTINATION.toPath(), StandardCopyOption.ATOMIC_MOVE);
+            } catch (IOException ex) {
+                Logger.getLogger(UpdateBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        System.out.println("Finished");
     }
 
     public void savePreferences() throws IOException {
@@ -111,7 +120,9 @@ public class UpdateBean {
     public void updateSoftware() {
         FacesContext context = FacesContext.getCurrentInstance();
         if (updateInProgress) {
-            context.addMessage(null, new FacesMessage("In Progress", "Update is in Progress"));
+            if (context != null) {
+                context.addMessage(null, new FacesMessage("In Progress", "Update is in Progress"));
+            }
             return;
         }
         System.out.println("in update software");
@@ -120,7 +131,9 @@ public class UpdateBean {
             updateManager = new UpdateManager(SOURCE, DESTINATION, TEMP);
         } catch (IOException ex) {
             Logger.getLogger(UpdateBean.class.getName()).log(Level.SEVERE, null, ex);
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Could not update software"));
+            if (context != null) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Could not update software"));
+            }
             return;
         }
 
@@ -128,10 +141,7 @@ public class UpdateBean {
             try {
                 if (updateManager.isUpdateAvailable() && !updateInProgress) {
                     updateInProgress = true;
-                    updateManager.update((progress1) -> {
-                        this.setProgress(progress1);
-                        System.out.print("progress " + progress1);
-                    });
+                    updateManager.downloadLatestAndUndeployCurrent();
                     CheckNetworkAndRebootOrNotify.reboot();
                 }
             } catch (IOException | InterruptedException ex) {
@@ -139,6 +149,10 @@ public class UpdateBean {
                 updateInProgress = false;
             }
         }).start();
+
+        if (context != null) {
+            context.addMessage(null, new FacesMessage("In Progress", "Update is in Progress"));
+        }
     }
 
 }
