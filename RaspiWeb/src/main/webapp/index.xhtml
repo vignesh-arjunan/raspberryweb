@@ -240,7 +240,7 @@
                     <p:tab title="Preferences" style="margin-bottom:20px">                        
                         <h:form id="preferencesForm">
                             <p:fieldset legend="Email Notification Settings" style="margin-bottom:20px">
-                                <h:panelGrid columns="2" cellpadding="5">                                
+                                <h:panelGrid columns="2" cellpadding="5" title="GOOGLE mail service is recommended, however you will need to Turn On less secure apps. please goto https://www.google.com/settings/security/lesssecureapps and Turn On (less secure apps).">                                
                                     <p:outputLabel value="Status Message : " />
                                     <p:inputText value="#{notificationBean.notificationMsg}" />
                                     <p:outputLabel value="Send Status Every : " />
@@ -251,7 +251,7 @@
                                         <f:selectItem itemLabel="1 hour" itemValue="0" />
                                         <p:ajax update=":tabView:accordionPanel3:preferencesForm:selection" />
                                     </p:selectOneButton>
-                                    <p:outputLabel value="Email Provider : " />
+                                    <p:outputLabel value="Email Provider (GOOGLE Preferred) : " />
                                     <p:selectOneButton id="providerSelection" value="#{notificationBean.mailProvider}">
                                         <f:selectItem itemLabel="GOOGLE" itemValue="#{notificationBean.google}"/>
                                         <f:selectItem itemLabel="YAHOO" itemValue="#{notificationBean.yahoo}"/>
@@ -261,7 +261,11 @@
                                     <p:outputLabel value="Full Email ID : " />
                                     <p:inputText value="#{notificationBean.email}" />
                                     <p:outputLabel value="Password : " />
-                                    <p:password value="#{notificationBean.password}" />                                      
+                                    <p:password value="#{notificationBean.password}" />
+                                    <p:outputLabel value="Email Setting for GOOGLE : " />
+                                    <p:commandLink onclick="window.open ('https://www.google.com/settings/security/lesssecureapps');">
+                                        <h:outputText value="Login to GOOGLE mail, please goto https://www.google.com/settings/security/lesssecureapps &amp; Turn On access for less secure apps." />
+                                    </p:commandLink>                                    
                                 </h:panelGrid>
                             </p:fieldset>
                             <p:fieldset legend="Motion Notification Settings" style="margin-bottom:20px">
