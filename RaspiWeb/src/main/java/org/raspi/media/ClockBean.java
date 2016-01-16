@@ -140,7 +140,7 @@ public class ClockBean {
         });
     }
 
-//    @Schedule(second = "*", minute = "*", hour = "*", info = "HDMI Checker", persistent = false)
+    @Schedule(second = "*", minute = "*", hour = "*", info = "HDMI Checker", persistent = false)
     public void secondTimeout() {
         // System.out.println("in second timeout");
 
