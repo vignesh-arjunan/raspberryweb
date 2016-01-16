@@ -17,7 +17,6 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.raspi.utils.Constants.DESTINATION;
@@ -62,7 +61,7 @@ public class UpdateManager {
         System.out.println("isUpdateAvailable " + isUpdateAvailable);
     }
 
-    public void update(Consumer<Integer> progress) throws IOException, MalformedURLException, FileNotFoundException, InterruptedException {
+    public void downloadLatestAndUndeployCurrent() throws IOException, MalformedURLException, FileNotFoundException, InterruptedException {
         if (!isUpdateAvailable) {
             throw new IllegalStateException("Update not available !!!");
         }
@@ -75,14 +74,11 @@ public class UpdateManager {
             while ((n = in.read(buf)) != -1) {
                 fos.write(buf, 0, n);
                 totalDownloaded += n;
-                progress.accept(new Double((100.0 * getTotalDownloaded()) / getContentLength()).intValue());
+                System.out.println(new Double((100.0 * getTotalDownloaded()) / getContentLength()).intValue());
             }
         }
         System.out.println("total " + totalDownloaded);
-        Files.delete(destination.toPath());
-        Thread.sleep(9000); // waiting for undeployment
-        Files.move(temp.toPath(), destination.toPath(), StandardCopyOption.ATOMIC_MOVE);
-        System.out.println("Finished");
+        Files.delete(destination.toPath());        
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -93,7 +89,7 @@ public class UpdateManager {
         Thread thread = new Thread(() -> {
             try {
                 if (updateManager.isUpdateAvailable()) {
-                    updateManager.update(System.out::println);
+                    updateManager.downloadLatestAndUndeployCurrent();
                 }
             } catch (IOException | InterruptedException ex) {
                 Logger.getLogger(UpdateManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -103,6 +99,8 @@ public class UpdateManager {
         thread.start();
 
         thread.join();
+        // deploying latest from TEMP
+        Files.move(TEMP.toPath(), DESTINATION.toPath(), StandardCopyOption.ATOMIC_MOVE);
     }
 
 }
