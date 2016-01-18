@@ -15,12 +15,8 @@ import java.util.List;
  */
 public class PlayListWrapper {
 
-    private final int index;
-    private final List<File> playList = new ArrayList<>();
-
-    public PlayListWrapper(int index) {
-        this.index = index;
-    }
+    private int index;
+    private List<File> playList = new ArrayList<>();
 
     public int getIndex() {
         return index;
@@ -28,5 +24,14 @@ public class PlayListWrapper {
 
     public List<File> getPlayList() {
         return playList;
-    }    
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public void setPlayList(List<File> playList) {
+        this.playList = playList;
+    }
+
 }
