@@ -97,7 +97,7 @@ public class UpdateBean {
             if (updateAvailable) {
                 context.addMessage(null, new FacesMessage("Available", "There is an update available"));
             } else {
-                context.addMessage(null, new FacesMessage("Unavailable", "There is no update available"));
+                context.addMessage(null, new FacesMessage("Unavailable", "You have the latest version"));
             }
         } catch (IOException ex) {
             Logger.getLogger(UpdateBean.class.getName()).log(Level.SEVERE, null, ex);

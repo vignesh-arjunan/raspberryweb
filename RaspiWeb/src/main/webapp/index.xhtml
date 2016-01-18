@@ -20,16 +20,18 @@
 
                 <h:form id="mediaControlsForm">
                     <p:growl id="messages7" showDetail="true" />
-                    <h:panelGrid columns="6" cellpadding="2">
-                        <p:commandButton value="Pause / Resume" update=":tabView:mediaControlsForm" action="#{mediaBean.pauseOrResume()}" />    
-                        <p:commandButton value="Stop" update=":tabView:mediaControlsForm" action="#{mediaBean.stop()}" />
-                        <p:commandButton value="Up Volume" update=":tabView:mediaControlsForm" action="#{mediaBean.increaseVolume()}" />  
-                        <p:commandButton value="Down Volume" update=":tabView:mediaControlsForm" action="#{mediaBean.decreaseVolume()}" />  
-                        <p:commandButton value="&lt;&lt;" title="seek -600 secs" rendered="false" update=":tabView:mediaControlsForm" action="#{mediaBean.seekMinus600()}" /> 
-                        <p:commandButton value="&lt; Seek" title="seek -30 secs" update=":tabView:mediaControlsForm" action="#{mediaBean.seekMinus30()}" /> 
-                        <p:commandButton value="Seek &gt;" title="seek +30 secs" update=":tabView:mediaControlsForm" action="#{mediaBean.seekPlus30()}" />     
-                        <p:commandButton value="&gt;&gt;" title="seek +600 secs" rendered="false" update=":tabView:mediaControlsForm" action="#{mediaBean.seekPlus600()}" />    
-                    </h:panelGrid>                  
+                    <p:fieldset legend="Media Controls" style="margin-bottom:20px">
+                        <h:panelGrid columns="6" cellpadding="2">
+                            <p:commandButton value="Pause / Resume" update=":tabView:mediaControlsForm" action="#{mediaBean.pauseOrResume()}" />    
+                            <p:commandButton value="Stop" update=":tabView:mediaControlsForm" action="#{mediaBean.stop()}" />
+                            <p:commandButton value="Up Volume" update=":tabView:mediaControlsForm" action="#{mediaBean.increaseVolume()}" />  
+                            <p:commandButton value="Down Volume" update=":tabView:mediaControlsForm" action="#{mediaBean.decreaseVolume()}" />  
+                            <p:commandButton value="&lt;&lt;" title="seek -600 secs" rendered="false" update=":tabView:mediaControlsForm" action="#{mediaBean.seekMinus600()}" /> 
+                            <p:commandButton value="&lt; Seek" title="seek -30 secs" update=":tabView:mediaControlsForm" action="#{mediaBean.seekMinus30()}" /> 
+                            <p:commandButton value="Seek &gt;" title="seek +30 secs" update=":tabView:mediaControlsForm" action="#{mediaBean.seekPlus30()}" />     
+                            <p:commandButton value="&gt;&gt;" title="seek +600 secs" rendered="false" update=":tabView:mediaControlsForm" action="#{mediaBean.seekPlus600()}" />    
+                        </h:panelGrid>                  
+                    </p:fieldset>
                 </h:form>
 
                 <p:tabView id="accordionPanel1">
@@ -43,8 +45,12 @@
                                     <br/>
                                     <p:commandButton value="Play" update=":tabView:accordionPanel1" action="#{mediaBean.playSelectedFile()}" />
                                     <p:commandButton value="Refresh" update=":tabView:accordionPanel1" action="#{mediaBean.loadMediaFiles()}" />
-                                    <p:commandButton value="Add to Play List" update=":tabView:accordionPanel1" action="#{mediaBean.addSelectedFile()}" />                      
-                                    <p:commandButton value="Remove" update=":tabView:accordionPanel1" action="#{mediaBean.deleteSelectedFile()}" />                        
+                                    <p:commandButton value="Remove" update=":tabView:accordionPanel1" action="#{mediaBean.deleteSelectedFile()}" />
+                                    <p:commandButton value="Add to PlayList : " update=":tabView:accordionPanel1" action="#{mediaBean.addSelectedFile()}" />    
+                                    <p:selectOneButton id="playListSelection" value="#{mediaBean.selectedPlayListIndex}"  >
+                                        <f:selectItems value="#{playListBean.allIndices}" />            
+                                        <p:ajax update=":tabView:accordionPanel1:mediaForm" />
+                                    </p:selectOneButton>
                                 </f:facet>
                                 <p:ajax event="rowSelect" />
                                 <p:column headerText="Name" style="width:400px;text-align: center" sortBy="#{mediaBean.getName(file)}">
@@ -55,39 +61,39 @@
                                 </p:column>                                       
                                 <p:column headerText="Size (Bytes)" style="width:100px;text-align: center" sortBy="#{mediaBean.getSizeActual(file)}">
                                     <h:outputText value="#{mediaBean.getSize(file)}" />
-                                </p:column>                               
-                                <f:facet name="footer">
-                                    Available Storage : #{mediaBean.getFreeMemUsage()} Bytes / Total Storage : #{mediaBean.getTotalMemUsage()} Bytes
-                                    <br/>                                   
-                                    <p:commandButton value="Play" update=":tabView:accordionPanel1" action="#{mediaBean.playSelectedFile()}" />
-                                    <p:commandButton value="Refresh" update=":tabView:accordionPanel1" action="#{mediaBean.loadMediaFiles()}" />
-                                    <p:commandButton value="Add to PlayList" update=":tabView:accordionPanel1" action="#{mediaBean.addSelectedFile()}" />                      
-                                    <p:commandButton value="Remove" update=":tabView:accordionPanel1" action="#{mediaBean.deleteSelectedFile()}" />                           
-                                </f:facet>
+                                </p:column>                                                               
                             </p:dataTable>                            
                         </h:form>
                     </p:tab>
 
-                    <p:tab id="playListTab" title="Play List" style="margin-bottom:20px">
+                    <p:tab id="playListTab" title="PlayLists" style="margin-bottom:20px">
                         <h:form id="playListForm">
-                            <p:growl id="messages2" showDetail="true" />                           
-                            <p:dataTable id="playListTable" var="file" value="#{playListBean.playList}" selectionMode="single" selection="#{playListBean.selectedFile}" rowKey="#{file.name}">
-                                <f:facet name="header">
-                                    <p:commandButton value="Play" actionListener="#{mediaBean.playAll}" update=":tabView:accordionPanel1:playListForm" />
+                            <p:growl id="messages2" showDetail="true" />    
+                            <p:fieldset legend="PlayList Controls" style="margin-bottom:20px">
+                                <h:panelGrid columns="7" cellpadding="5">
+                                    <p:commandButton value="Save" actionListener="#{playListBean.savePlayList()}" update=":tabView:accordionPanel1:playListForm" />    
                                     <p:selectBooleanButton value="#{mediaBean.repeat}" onLabel="Repeat On" offLabel="Repeat Off">
                                         <p:ajax update=":tabView:accordionPanel1:playListForm" />
                                     </p:selectBooleanButton>
-                                    <p:commandButton value="Clear" actionListener="#{playListBean.clearPlayList}" update=":tabView:accordionPanel1:playListForm" />
-                                    <p:commandButton value="Save" actionListener="#{playListBean.savePlayList()}" update=":tabView:accordionPanel1:playListForm" />    
-                                    <p:commandButton value="Move Up" action="#{playListBean.upSelectedFile()}" update=":tabView:accordionPanel1:playListForm" />
-                                    <p:commandButton value="Move Down" action="#{playListBean.downSelectedFile()}" update=":tabView:accordionPanel1:playListForm" />
-                                    <p:commandButton value="Remove" action="#{playListBean.deleteSelectedFile()}" update=":tabView:accordionPanel1:playListForm" />
-                                </f:facet>
-                                <p:ajax event="rowSelect" />
-                                <p:column headerText="Name" style="width:700px;text-align: center">
-                                    <h:outputText value="#{mediaBean.getName(file)}" />
-                                </p:column>
-                            </p:dataTable>
+                                    <p:commandButton value="Play Selected Play List" actionListener="#{mediaBean.playAll}" update=":tabView:accordionPanel1:playListForm" />
+                                    <p:commandButton value="Clear Seleced Play List"  actionListener="#{playListBean.clearPlayList()}" update=":tabView:accordionPanel1:playListForm" />
+                                    <p:outputLabel value="Selected Play List : " />
+                                    <p:selectOneButton id="playListSelection" value="#{playListBean.selectedTabIndex}" >
+                                        <f:selectItems value="#{playListBean.allIndices}" />     
+                                        <p:ajax update=":tabView:accordionPanel1:playListForm:playListSelection" />
+                                    </p:selectOneButton>                                    
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <p:tabView id="accordionPanel6" value="#{playListBean.playLists}" var="playListWrapper">
+                                <p:tab title="PlayList #{playListWrapper.index + 1}">
+                                    <p:dataTable id="playListTable" var="file" value="#{playListWrapper.playList}">
+                                        <p:ajax event="rowSelect" />
+                                        <p:column headerText="Name" style="width:700px;text-align: center">
+                                            <h:outputText value="#{mediaBean.getName(file)}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:tab>
+                            </p:tabView>
                         </h:form>
                     </p:tab>
 
@@ -183,6 +189,13 @@
                                     <p:selectBooleanCheckbox value="#{clockBean.alarmEntry.playList}">
                                         <p:ajax update="chooseMedia" />
                                     </p:selectBooleanCheckbox>
+                                    
+                                    <p:outputLabel value="Selected Play List : " />
+                                    <p:selectOneButton id="playListSelection" value="#{clockBean.alarmEntry.selectedPlayListIndex}" >
+                                        <f:selectItems value="#{playListBean.allIndices}" />     
+                                        <p:ajax update=":tabView:accordionPanel2:alarmForm:playListSelection" />
+                                    </p:selectOneButton>
+                                    
                                 </h:panelGrid>
                             </p:fieldset>
                             <p:commandButton value="#{clockBean.buttonLabel}" actionListener="#{clockBean.addEditAlarm()}" update="messages1,:tabView:accordionPanel2:alarmForm,:tabView:accordionPanel2:alarmListForm" />
@@ -263,7 +276,7 @@
                                     <p:outputLabel value="Password : " />
                                     <p:password value="#{notificationBean.password}" />
                                     <p:outputLabel value="Email Setting for GOOGLE : " />
-                                    <p:commandLink onclick="window.open ('https://www.google.com/settings/security/lesssecureapps');">
+                                    <p:commandLink onclick="window.open('https://www.google.com/settings/security/lesssecureapps');">
                                         <h:outputText value="Login to GOOGLE mail, please goto https://www.google.com/settings/security/lesssecureapps &amp; Turn On access for less secure apps." />
                                     </p:commandLink>                                    
                                 </h:panelGrid>
@@ -295,41 +308,39 @@
 
                                 <h:form id="recordingForm">
                                     <p:growl id="messages6" showDetail="true" />
-                                    <f:view beforePhase="#{watcherBean.loadRecordingFiles()}">
-                                        <p:dataTable id="recordings" var="file" value="#{watcherBean.recordingFiles}" selectionMode="single" selection="#{watcherBean.selectedFile}" rowKey="#{file.name}">
-                                            <f:facet name="header">
-                                                Available Storage : #{mediaBean.getFreeMemUsage()} Bytes / Total Storage : #{mediaBean.getTotalMemUsage()} Bytes                                                
-                                                <br/>
-                                                <p:commandButton value="Refresh" action="#{watcherBean.loadRecordingFiles()}" update="recordings" />
-                                                <p:commandButton value="Play" update="recordings" action="#{watcherBean.playSelectedFile()}" />  
-                                                <p:commandButton value="Email and Remove" update="recordings" action="#{watcherBean.deliverAndDelete()}" />  
-                                                <p:commandButton value="Remove" update="recordings" action="#{watcherBean.deleteSelectedFile()}" />
-                                                <p:commandButton value="Remove All" update="recordings" action="#{watcherBean.deleteAll()}" />
-                                            </f:facet>
-                                            <p:ajax event="rowSelect" />
-                                            <p:column headerText="Name" style="width:200px;text-align: center" sortBy="#{mediaBean.getName(file)}">
-                                                <h:outputText value="#{mediaBean.getName(file)}" />
-                                            </p:column>
-                                            <p:column headerText="Type" style="width:50px;text-align: center" sortBy="#{mediaBean.getExt(file)}">
-                                                <h:outputText value="#{mediaBean.getExt(file)}" />
-                                            </p:column>                                       
-                                            <p:column headerText="Size (Bytes)" style="width:100px;text-align: center" sortBy="#{mediaBean.getSizeActual(file)}">
-                                                <h:outputText value="#{mediaBean.getSize(file)}" />
-                                            </p:column>                               
-                                            <p:column headerText="Last Modified" style="width:100px;text-align: center" sortBy="#{mediaBean.getlastModified(toCheck)}">
-                                                <h:outputText value="#{mediaBean.getlastModified(file)}" />
-                                            </p:column>
-                                            <f:facet name="footer">                                                                        
-                                                Available Storage : #{mediaBean.getFreeMemUsage()} Bytes / Total Storage : #{mediaBean.getTotalMemUsage()} Bytes  
-                                                <br/>
-                                                <p:commandButton value="Refresh" action="#{watcherBean.loadRecordingFiles()}" update="recordings" />
-                                                <p:commandButton value="Play" update="recordings" action="#{watcherBean.playSelectedFile()}" />  
-                                                <p:commandButton value="Email and Remove" update="recordings" action="#{watcherBean.deliverAndDelete()}" />  
-                                                <p:commandButton value="Remove" update="recordings" action="#{watcherBean.deleteSelectedFile()}" />
-                                                <p:commandButton value="Remove All" update="recordings" action="#{watcherBean.deleteAll()}" />
-                                            </f:facet>
-                                        </p:dataTable>
-                                    </f:view>
+                                    <p:dataTable id="recordings" var="file" value="#{watcherBean.recordingFiles}" selectionMode="single" selection="#{watcherBean.selectedFile}" rowKey="#{file.name}">
+                                        <f:facet name="header">
+                                            Available Storage : #{mediaBean.getFreeMemUsage()} Bytes / Total Storage : #{mediaBean.getTotalMemUsage()} Bytes                                                
+                                            <br/>
+                                            <p:commandButton value="Refresh" action="#{watcherBean.loadRecordingFiles()}" update="recordings" />
+                                            <p:commandButton value="Play" update="recordings" action="#{watcherBean.playSelectedFile()}" />  
+                                            <p:commandButton value="Email and Remove" update="recordings" action="#{watcherBean.deliverAndDelete()}" />  
+                                            <p:commandButton value="Remove" update="recordings" action="#{watcherBean.deleteSelectedFile()}" />
+                                            <p:commandButton value="Remove All" update="recordings" action="#{watcherBean.deleteAll()}" />
+                                        </f:facet>
+                                        <p:ajax event="rowSelect" />
+                                        <p:column headerText="Name" style="width:200px;text-align: center" sortBy="#{mediaBean.getName(file)}">
+                                            <h:outputText value="#{mediaBean.getName(file)}" />
+                                        </p:column>
+                                        <p:column headerText="Type" style="width:50px;text-align: center" sortBy="#{mediaBean.getExt(file)}">
+                                            <h:outputText value="#{mediaBean.getExt(file)}" />
+                                        </p:column>                                       
+                                        <p:column headerText="Size (Bytes)" style="width:100px;text-align: center" sortBy="#{mediaBean.getSizeActual(file)}">
+                                            <h:outputText value="#{mediaBean.getSize(file)}" />
+                                        </p:column>                               
+                                        <p:column headerText="Last Modified" style="width:100px;text-align: center" sortBy="#{mediaBean.getlastModified(toCheck)}">
+                                            <h:outputText value="#{mediaBean.getlastModified(file)}" />
+                                        </p:column>
+                                        <f:facet name="footer">                                                                        
+                                            Available Storage : #{mediaBean.getFreeMemUsage()} Bytes / Total Storage : #{mediaBean.getTotalMemUsage()} Bytes  
+                                            <br/>
+                                            <p:commandButton value="Refresh" action="#{watcherBean.loadRecordingFiles()}" update="recordings" />
+                                            <p:commandButton value="Play" update="recordings" action="#{watcherBean.playSelectedFile()}" />  
+                                            <p:commandButton value="Email and Remove" update="recordings" action="#{watcherBean.deliverAndDelete()}" />  
+                                            <p:commandButton value="Remove" update="recordings" action="#{watcherBean.deleteSelectedFile()}" />
+                                            <p:commandButton value="Remove All" update="recordings" action="#{watcherBean.deleteAll()}" />
+                                        </f:facet>
+                                    </p:dataTable>
                                 </h:form>
                             </p:tab>    
 
