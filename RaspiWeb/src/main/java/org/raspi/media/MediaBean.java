@@ -54,6 +54,7 @@ public class MediaBean implements Runnable {
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
     private String youtubeURL;
     private MediaPlayer mediaPlayer;
+    private int selectedPlayListIndex = 1;
 
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
@@ -94,7 +95,12 @@ public class MediaBean implements Runnable {
 
     public void playAll() throws IOException {
         stopWithoutClearingRepeat();
-        playListQueue.addAll(playListBean.getPlayList());
+        playListQueue.addAll(playListBean.getPlayLists().get(playListBean.getSelectedTabIndex() - 1).getPlayList());
+    }
+    
+    public void playAll(int index) throws IOException {
+        stopWithoutClearingRepeat();
+        playListQueue.addAll(playListBean.getPlayLists().get(index).getPlayList());
     }
 
     public void stop() throws IOException {
@@ -127,18 +133,26 @@ public class MediaBean implements Runnable {
         this.currentlyPlaying = currentlyPlaying;
     }
 
+    public int getSelectedPlayListIndex() {
+        return selectedPlayListIndex;
+    }
+
+    public void setSelectedPlayListIndex(int selectedPlayListIndex) {
+        this.selectedPlayListIndex = selectedPlayListIndex;
+    }
+
     public void addSelectedFile() {
         System.out.println("selectedFile " + selectedFile);
         if (!FileValidator.validateFile(selectedFile)) {
             return;
         }
-        if (playListBean.getPlayList().contains(selectedFile)) {
+        if (playListBean.getPlayLists().get((getSelectedPlayListIndex()) - 1).getPlayList().contains(selectedFile)) {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Already Added", "Already Added to the Play List"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Already Added", "Already Added to the Play List " + getSelectedPlayListIndex()));
             return;
         }
-        playListBean.getPlayList().add(selectedFile);
-        FacesMessage message = new FacesMessage("Succesful", "Added " + selectedFile.getName() + " to Play List");
+        playListBean.getPlayLists().get((getSelectedPlayListIndex()) - 1).getPlayList().add(selectedFile);
+        FacesMessage message = new FacesMessage("Succesful", "Added " + selectedFile.getName() + " to Play List " + getSelectedPlayListIndex());
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
@@ -148,7 +162,7 @@ public class MediaBean implements Runnable {
         }
         System.out.println("selectedFile.delete() " + selectedFile.delete());
         loadMediaFiles();
-        playListBean.getPlayList().remove(selectedFile);
+        playListBean.getPlayLists().forEach(list -> list.getPlayList().remove(selectedFile));
     }
 
     public void playSelectedFile() throws IOException {
@@ -219,7 +233,7 @@ public class MediaBean implements Runnable {
         }
     }
 
-    public void playFromURL() throws IOException {        
+    public void playFromURL() throws IOException {
         try {
             String videoURL = PlayYoutube.read(new URI(youtubeURL.trim()).toString());
             stop();
@@ -328,7 +342,7 @@ public class MediaBean implements Runnable {
             currentlyPlaying = null;
 
             if (repeat && playListQueue.isEmpty()) {
-                playListQueue.addAll(playListBean.getPlayList());
+                playListQueue.addAll(playListBean.getPlayLists().get(playListBean.getSelectedTabIndex() - 1).getPlayList()); // is this the desired behaviour
             }
 
         }

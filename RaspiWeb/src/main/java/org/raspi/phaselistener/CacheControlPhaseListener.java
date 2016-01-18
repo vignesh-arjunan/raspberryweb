@@ -9,14 +9,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import org.raspi.motion.WatcherBean;
 
 /**
  *
  * @author vignesh
  */
 public class CacheControlPhaseListener implements PhaseListener {
-
+    
+    @Inject
+    private WatcherBean watcherBean;
+   
     @Override
     public PhaseId getPhaseId() {
         return PhaseId.RENDER_RESPONSE;
@@ -37,5 +42,7 @@ public class CacheControlPhaseListener implements PhaseListener {
         response.addHeader("Cache-Control", "no-store");
         response.addHeader("Cache-Control", "must-revalidate");
         response.addDateHeader("Expires", 0);
+        System.out.println("beforePhase called");
+        watcherBean.loadRecordingFiles();       
     }
 }

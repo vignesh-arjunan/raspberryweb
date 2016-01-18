@@ -22,6 +22,15 @@ public class AlarmEntry implements Serializable {
     private String chosenMedia;
     private boolean active = true;
     private boolean playList = true;
+    private int selectedPlayListIndex = 1;
+
+    public int getSelectedPlayListIndex() {
+        return selectedPlayListIndex;
+    }
+
+    public void setSelectedPlayListIndex(int selectedPlayListIndex) {
+        this.selectedPlayListIndex = selectedPlayListIndex;
+    }
 
     public boolean isActive() {
         return active;
@@ -77,7 +86,7 @@ public class AlarmEntry implements Serializable {
 
     public String getDisplayChosenMedia() {
         if (playList) {
-            return "PLAYLIST";
+            return "Play List " + getSelectedPlayListIndex();
         }
         return getChosenMedia();
     }
@@ -135,5 +144,4 @@ public class AlarmEntry implements Serializable {
         return Objects.equals(this.name, other.name);
     }
 
-    
 }

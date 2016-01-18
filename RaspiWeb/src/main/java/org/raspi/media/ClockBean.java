@@ -44,7 +44,7 @@ public class ClockBean {
     private MediaPlayer mediaPlayer;
     private boolean addMode = true;
     private boolean isVideoPlaying = false;
-
+    
     public boolean isAddMode() {
         return addMode;
     }
@@ -69,6 +69,7 @@ public class ClockBean {
             alarmEntry.setName(selectedAlarmEntry.getName());
             alarmEntry.setPlayList(selectedAlarmEntry.isPlayList());
             alarmEntry.setSelectedDays(selectedAlarmEntry.getSelectedDays());
+            alarmEntry.setSelectedPlayListIndex(selectedAlarmEntry.getSelectedPlayListIndex());
         }
     }
 
@@ -133,7 +134,7 @@ public class ClockBean {
                     (mediaPlayer = new MediaPlayer(new File(PARENT_MEDIA_DIR + File.separator + alarmEntryItem.getChosenMedia()))).play(true);
                     return;
                 }
-                mediaBean.playAll();
+                mediaBean.playAll(alarmEntryItem.getSelectedPlayListIndex() - 1);
             } catch (IOException ex) {
                 Logger.getLogger(ClockBean.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -178,6 +179,7 @@ public class ClockBean {
         System.out.println("selectedDays " + Arrays.toString(alarmEntry.getSelectedDays()));
         System.out.println("chosenMedia " + alarmEntry.getChosenMedia());
         System.out.println("isPlayList() " + alarmEntry.isPlayList());
+        System.out.println("selectedPlayListIndex() " + alarmEntry.getSelectedPlayListIndex());
 
         if (alarmEntry.getName() == null || alarmEntry.getName().trim().isEmpty()) {
             FacesContext context = FacesContext.getCurrentInstance();

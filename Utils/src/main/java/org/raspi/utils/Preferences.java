@@ -1,10 +1,11 @@
 package org.raspi.utils;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
+import static org.raspi.utils.Constants.NO_OF_PLAYLISTS;
 import org.raspi.utils.SendEmail.MailProvider;
 
 /**
@@ -15,7 +16,8 @@ public class Preferences implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private List<File> playList = new ArrayList<>();
+//    private List<File> playList = new ArrayList<>();
+    private List<PlayListWrapper> playLists = new ArrayList<>(NO_OF_PLAYLISTS);
     private List<AlarmEntry> alarmList = new ArrayList<>();
     private String notificationWhen = "-1";
     private String notificationMsg = "I am up !!";
@@ -28,14 +30,34 @@ public class Preferences implements Serializable {
     private boolean notifyAttachment;
     private boolean updateSoftwareAutomatically;
 
+    public Preferences() {
+        IntStream.range(0, NO_OF_PLAYLISTS).forEach(index -> playLists.add(new PlayListWrapper(index)));
+    }
+
+//    public List<File> getPlayList() {
+//        return playList;
+//    }
+//
+//    public void setPlayList(List<File> playList) {
+//        Objects.requireNonNull(playList, "Play List can't be null");
+//        this.playList = new ArrayList<>(playList);
+//    }
+    public List<PlayListWrapper> getPlayLists() {
+        return playLists;
+    }
+
+    public void setPlayLists(List<PlayListWrapper> playLists) {
+        this.playLists = playLists;
+    }
+
     public boolean isUpdateSoftwareAutomatically() {
         return updateSoftwareAutomatically;
     }
 
     public void setUpdateSoftwareAutomatically(boolean updateSoftwareAutomatically) {
         this.updateSoftwareAutomatically = updateSoftwareAutomatically;
-    }       
-    
+    }
+
     public String getNotificationMsg() {
         return notificationMsg;
     }
@@ -115,14 +137,5 @@ public class Preferences implements Serializable {
     public void setAlarmList(List<AlarmEntry> alarmList) {
         Objects.requireNonNull(alarmList, "Alarm List can't be null");
         this.alarmList = new ArrayList<>(alarmList);
-    }
-
-    public List<File> getPlayList() {
-        return playList;
-    }
-
-    public void setPlayList(List<File> playList) {
-        Objects.requireNonNull(playList, "Play List can't be null");
-        this.playList = new ArrayList<>(playList);
     }
 }
