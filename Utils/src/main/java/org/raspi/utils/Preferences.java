@@ -31,17 +31,13 @@ public class Preferences implements Serializable {
     private boolean updateSoftwareAutomatically;
 
     public Preferences() {
-        IntStream.range(0, NO_OF_PLAYLISTS).forEach(index -> playLists.add(new PlayListWrapper(index)));
+        IntStream.range(0, NO_OF_PLAYLISTS).forEach((index) -> {
+            PlayListWrapper playListWrapper = new PlayListWrapper();
+            playListWrapper.setIndex(index);
+            playLists.add(playListWrapper);
+        });
     }
 
-//    public List<File> getPlayList() {
-//        return playList;
-//    }
-//
-//    public void setPlayList(List<File> playList) {
-//        Objects.requireNonNull(playList, "Play List can't be null");
-//        this.playList = new ArrayList<>(playList);
-//    }
     public List<PlayListWrapper> getPlayLists() {
         return playLists;
     }
