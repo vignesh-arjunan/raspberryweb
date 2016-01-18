@@ -70,7 +70,7 @@
                         <h:form id="playListForm">
                             <p:growl id="messages2" showDetail="true" />    
                             <p:fieldset legend="PlayList Controls" style="margin-bottom:20px">
-                                <h:panelGrid columns="7" cellpadding="5">
+                                <h:panelGrid columns="6" cellpadding="5">
                                     <p:commandButton value="Save" actionListener="#{playListBean.savePlayList()}" update=":tabView:accordionPanel1:playListForm" />    
                                     <p:selectBooleanButton value="#{mediaBean.repeat}" onLabel="Repeat On" offLabel="Repeat Off">
                                         <p:ajax update=":tabView:accordionPanel1:playListForm" />
@@ -84,7 +84,7 @@
                                     </p:selectOneButton>                                    
                                 </h:panelGrid>
                             </p:fieldset>
-                            <p:tabView id="accordionPanel6" value="#{playListBean.playLists}" var="playListWrapper">
+                            <p:accordionPanel multiple="true" id="accordionPanel6" value="#{playListBean.playLists}" var="playListWrapper">
                                 <p:tab title="PlayList #{playListWrapper.index + 1}">
                                     <p:dataTable id="playListTable" var="file" value="#{playListWrapper.playList}">
                                         <p:ajax event="rowSelect" />
@@ -93,7 +93,7 @@
                                         </p:column>
                                     </p:dataTable>
                                 </p:tab>
-                            </p:tabView>
+                            </p:accordionPanel>
                         </h:form>
                     </p:tab>
 
