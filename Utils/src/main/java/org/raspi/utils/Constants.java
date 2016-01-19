@@ -24,7 +24,9 @@ public class Constants {
     }
 
     public static final File PARENT_MEDIA_DIR = new File("/home/pi");
+//    public static final File PARENT_MEDIA_DIR = new File("/Users/vignesh");
     public static final File PREFERENCES_FILE = new File("/home/pi/Preferences");
+//    public static final File PREFERENCES_FILE = new File("/Users/vignesh/Preferences");
     public static final File MOTION_DIR = new File("/tmp/motion");
     public static final String EVENT_STARTED = "event_started";
     public static final String EVENT_MOTION_DETECTED = "event_motion_detected";
