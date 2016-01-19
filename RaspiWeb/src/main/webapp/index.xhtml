@@ -46,7 +46,7 @@
                                     <p:commandButton value="Play" update=":tabView:accordionPanel1" action="#{mediaBean.playSelectedFile()}" />
                                     <p:commandButton value="Refresh" update=":tabView:accordionPanel1" action="#{mediaBean.loadMediaFiles()}" />
                                     <p:commandButton value="Remove" update=":tabView:accordionPanel1" action="#{mediaBean.deleteSelectedFile()}" />
-                                    <p:commandButton value="Add to PlayList : " update=":tabView:accordionPanel1" action="#{mediaBean.addSelectedFile()}" />    
+                                    <p:commandButton value="Add to Play List : " update=":tabView:accordionPanel1" action="#{mediaBean.addSelectedFile()}" />    
                                     <p:selectOneButton id="playListSelection" value="#{mediaBean.selectedPlayListIndex}"  >
                                         <f:selectItems value="#{playListBean.allIndices}" />            
                                         <p:ajax update=":tabView:accordionPanel1:mediaForm" />
@@ -66,15 +66,19 @@
                         </h:form>
                     </p:tab>
 
-                    <p:tab id="playListTab" title="PlayLists" style="margin-bottom:20px">
+                    <p:tab id="playListTab" title="Play Lists" style="margin-bottom:20px">
                         <h:form id="playListForm">
                             <p:growl id="messages2" showDetail="true" />    
-                            <p:fieldset legend="PlayList Controls" style="margin-bottom:20px">
+                            <p:fieldset legend="Play List Controls" style="margin-bottom:20px">
                                 <h:panelGrid columns="6" cellpadding="5">
                                     <p:commandButton value="Save" actionListener="#{playListBean.savePlayList()}" update=":tabView:accordionPanel1:playListForm" />    
                                     <p:selectBooleanButton value="#{mediaBean.repeat}" onLabel="Repeat On" offLabel="Repeat Off">
                                         <p:ajax update=":tabView:accordionPanel1:playListForm" />
-                                    </p:selectBooleanButton>
+                                    </p:selectBooleanButton>                                                                    
+                                </h:panelGrid>
+                            </p:fieldset>
+                            <p:fieldset legend="Selected Play List Controls" style="margin-bottom:20px">
+                                <h:panelGrid columns="2" cellpadding="5">
                                     <p:commandButton value="Play Selected Play List" actionListener="#{mediaBean.playAll}" update=":tabView:accordionPanel1:playListForm" />
                                     <p:commandButton value="Clear Seleced Play List"  actionListener="#{playListBean.clearPlayList()}" update=":tabView:accordionPanel1:playListForm" />
                                     <p:outputLabel value="Selected Play List : " />
@@ -85,7 +89,7 @@
                                 </h:panelGrid>
                             </p:fieldset>
                             <p:accordionPanel multiple="true" id="accordionPanel6" value="#{playListBean.playLists}" var="playListWrapper">
-                                <p:tab title="PlayList #{playListWrapper.index + 1}">
+                                <p:tab title="Play List #{playListWrapper.index + 1}">
                                     <p:dataTable id="playListTable" var="file" value="#{playListWrapper.playList}">
                                         <p:ajax event="rowSelect" />
                                         <p:column headerText="Name" style="width:700px;text-align: center">
@@ -185,13 +189,13 @@
                                         <f:selectItems value="#{mediaBean.mediaFileNames}" />
                                     </p:selectOneMenu>
 
-                                    <p:outputLabel value="Play PlayList : " />
+                                    <p:outputLabel value="Play Play List : " />
                                     <p:selectBooleanCheckbox value="#{clockBean.alarmEntry.playList}">
-                                        <p:ajax update="chooseMedia" />
+                                        <p:ajax update="chooseMedia, playListSelection" />
                                     </p:selectBooleanCheckbox>
                                     
                                     <p:outputLabel value="Selected Play List : " />
-                                    <p:selectOneButton id="playListSelection" value="#{clockBean.alarmEntry.selectedPlayListIndex}" >
+                                    <p:selectOneButton id="playListSelection" value="#{clockBean.alarmEntry.selectedPlayListIndex}" disabled="#{!clockBean.alarmEntry.playList}">
                                         <f:selectItems value="#{playListBean.allIndices}" />     
                                         <p:ajax update=":tabView:accordionPanel2:alarmForm:playListSelection" />
                                     </p:selectOneButton>
