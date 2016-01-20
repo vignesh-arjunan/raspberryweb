@@ -356,7 +356,7 @@
                                             <p:commandButton value="Clear" actionListener="#{watcherBean.clearErrors()}" update="errors" />
                                         </f:facet>
                                         <p:column headerText="Error" style="width:100px;text-align: center">
-                                            <h:outputText value="#{error.toString}" />
+                                            <h:outputText value="#{error.toString()}" />
                                         </p:column>
                                         <f:facet name="footer">
                                             <p:commandButton value="Refresh" update="errors" />
