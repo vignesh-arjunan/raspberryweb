@@ -236,10 +236,11 @@ public class MediaBean implements Runnable {
     public void playFromURL() throws IOException {
         try {
             String videoURL = PlayYoutube.read(new URI(youtubeURL.trim()).toString());
+            System.out.println("videoURL " + videoURL);
             stop();
             new Thread(() -> {
                 try {
-                    (mediaPlayer = new MediaPlayer(videoURL)).play(true);
+                    (mediaPlayer = new MediaPlayer(videoURL)).play(false);
                 } catch (IOException ex) {
                     Logger.getLogger(MediaBean.class.getName()).log(Level.SEVERE, null, ex);
                 }

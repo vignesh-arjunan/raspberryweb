@@ -54,7 +54,7 @@ public class MediaPlayer {
     public boolean isPlaying() {
         return player.getProcess().isAlive();
     }
-    
+
     public ProcessExecutor getPlayer() {
         return player;
     }
@@ -77,10 +77,11 @@ public class MediaPlayer {
         if (toBePlayed != null) {
             commands.add(toBePlayed.getAbsolutePath());
         } else {
-            commands.add(videoURI);
+            System.out.println("videoURI " + videoURI);
+            commands.add(videoURI.trim());
         }
 
-        commands.forEach(System.out::println);
+        commands.forEach(cmd -> System.out.println("command " + cmd));
 
         if (isVideo()) {
             HDMIControl.setHDMIActive(true);
