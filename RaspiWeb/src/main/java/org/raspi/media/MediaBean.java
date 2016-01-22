@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
@@ -26,6 +27,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.raspi.utils.AlarmEntry;
 import org.raspi.utils.Constants;
 import static org.raspi.utils.Constants.PARENT_MEDIA_DIR;
 import org.raspi.utils.FileValidator;
@@ -50,6 +52,8 @@ public class MediaBean implements Runnable {
     private String currentlyPlaying;
     @Inject
     private PlayListBean playListBean;
+    @Inject
+    private ClockBean clockBean;
     private final NumberFormat nf = NumberFormat.getNumberInstance();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
     private String youtubeURL;
@@ -97,7 +101,7 @@ public class MediaBean implements Runnable {
         stopWithoutClearingRepeat();
         playListQueue.addAll(playListBean.getPlayLists().get(playListBean.getSelectedTabIndex() - 1).getPlayList());
     }
-    
+
     public void playAll(int index) throws IOException {
         stopWithoutClearingRepeat();
         playListQueue.addAll(playListBean.getPlayLists().get(index).getPlayList());
@@ -160,9 +164,27 @@ public class MediaBean implements Runnable {
         if (!FileValidator.validateFile(selectedFile)) {
             return;
         }
-        System.out.println("selectedFile.delete() " + selectedFile.delete());
-        loadMediaFiles();
-        playListBean.getPlayLists().forEach(list -> list.getPlayList().remove(selectedFile));
+
+        List<AlarmEntry> referredAlarms = clockBean.getAlarmList().stream().filter(
+                (AlarmEntry alarmEntry) -> {
+                    if (alarmEntry.isPlayList()) {
+                        return playListBean.getPlayLists().get(alarmEntry.getSelectedPlayListIndex() - 1).getPlayList().contains(selectedFile);
+                    } else {
+                        return new File(PARENT_MEDIA_DIR + File.separator + alarmEntry.getChosenMedia()).equals(selectedFile);
+                    }
+                }
+        ).collect(toList());
+
+        if (referredAlarms.isEmpty()) {
+            System.out.println("selectedFile.delete() " + selectedFile.delete());
+            loadMediaFiles();
+            playListBean.getPlayLists().forEach(list -> list.getPlayList().remove(selectedFile));
+            FacesMessage message = new FacesMessage("Succesful", "Removed " + selectedFile.getName());
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        } else {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Media Referred in Alarm", "Media Referrd in alarms : " + referredAlarms.stream().map(alarm -> alarm.getName()).collect(Collectors.joining(", "))));
+        }
     }
 
     public void playSelectedFile() throws IOException {
