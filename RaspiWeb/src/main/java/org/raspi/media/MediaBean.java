@@ -32,7 +32,7 @@ import org.raspi.utils.Constants;
 import static org.raspi.utils.Constants.PARENT_MEDIA_DIR;
 import org.raspi.utils.FileValidator;
 import org.raspi.utils.MediaPlayer;
-import org.raspi.utils.PlayYoutube;
+import org.raspi.utils.Youtube;
 
 /**
  *
@@ -59,6 +59,39 @@ public class MediaBean implements Runnable {
     private String youtubeURL;
     private MediaPlayer mediaPlayer;
     private int selectedPlayListIndex = 1;
+    private boolean isDownloading;
+    private String lastIssuedDownloadURL;
+    private Youtube youtube;
+
+    public String getLastDownloadMsg() {
+        if (youtube != null
+                && youtube.getProcessExecutor().isStarted()
+                && youtube.getProcessExecutor().isBlocking()) {
+            return youtube.getProcessExecutor().getFlags().getLastInputMsg();
+        } else {
+            return "No Active Download in progress";
+        }
+    }
+
+    public Youtube getYoutube() {
+        return youtube;
+    }        
+
+    public boolean isIsDownloading() {
+        return isDownloading;
+    }
+
+    public void setIsDownloading(boolean isDownloading) {
+        this.isDownloading = isDownloading;
+    }
+
+    public String getLastIssuedDownloadURL() {
+        return lastIssuedDownloadURL;
+    }
+
+    public void setLastIssuedDownloadURL(String lastIssuedDownloadURL) {
+        this.lastIssuedDownloadURL = lastIssuedDownloadURL;
+    }
 
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
@@ -255,9 +288,14 @@ public class MediaBean implements Runnable {
         }
     }
 
-    public void playFromURL() throws IOException {
+    public void playFromURI() {
+        if (youtubeURL.trim().isEmpty()) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Could not play", "URL not entered"));
+            return;
+        }
         try {
-            String videoURL = PlayYoutube.read(new URI(youtubeURL.trim()).toString());
+            String videoURL = Youtube.getStreamingURI(new URI(youtubeURL.trim()).toString());
             System.out.println("videoURL " + videoURL);
             stop();
             new Thread(() -> {
@@ -271,6 +309,47 @@ public class MediaBean implements Runnable {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Input", "Youtube URL is not valid"));
         } catch (IOException | URISyntaxException exception) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Could not play", "URL not accessible"));
+        }
+    }
+
+    public synchronized void downloadFromURI() {
+        if (youtubeURL.trim().isEmpty()) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Could not play", "URL not entered"));
+            return;
+        }
+        try {
+            FacesContext context = FacesContext.getCurrentInstance();
+            if (isDownloading) {
+                if (context != null) {
+                    context.addMessage(null, new FacesMessage("In Progress", "Download of " + lastIssuedDownloadURL + " is in Progress"));
+                }
+                return;
+            }
+            new URI(youtubeURL.trim()).toString();
+            lastIssuedDownloadURL = youtubeURL;
+            new Thread(() -> {
+                try {
+                    if (!isDownloading) {
+                        isDownloading = true;
+                        youtube = new Youtube();
+                        youtube.download(new URI(youtubeURL.trim()).toString());
+                    }
+                } catch (IOException | URISyntaxException ex) {
+                    Logger.getLogger(MediaBean.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    isDownloading = false;
+                }
+            }).start();
+
+            context.addMessage(null, new FacesMessage("Download Started", "Download of " + lastIssuedDownloadURL + " is in Progress"));
+
+        } catch (IllegalArgumentException illegalArgumentException) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Input", "Youtube URL is not valid"));
+        } catch (URISyntaxException exception) {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Could not play", "URL not accessible"));
         }
