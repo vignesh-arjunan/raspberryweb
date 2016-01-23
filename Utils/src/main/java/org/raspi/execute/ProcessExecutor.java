@@ -13,8 +13,11 @@ import java.util.Objects;
  */
 public class ProcessExecutor {
 
-    final List<String> command;
+    private final List<String> command;
     private Process process;
+    private Flags flags;
+    private boolean started;
+    private boolean blocking;
 
     public ProcessExecutor(List<String> command) {
         Objects.requireNonNull(command, "command cannot be null");
@@ -24,6 +27,8 @@ public class ProcessExecutor {
     public void startExecutionNonBlocking() throws IOException {
         ProcessBuilder pb = new ProcessBuilder(command);
         process = pb.start();
+        started = true;
+        blocking = false;
     }
 
     public Process getProcess() {
@@ -37,11 +42,25 @@ public class ProcessExecutor {
         return process.getOutputStream();
     }
 
+    public Flags getFlags() {
+        return flags;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public boolean isBlocking() {
+        return blocking;
+    }
+
     public Flags startExecution() throws IOException {
 
         ProcessBuilder pb = new ProcessBuilder(command);
         process = pb.start();
-        Flags flags = new Flags();
+        flags = new Flags();
+        started = true;
+        blocking = true;
 
         try (BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
@@ -51,7 +70,7 @@ public class ProcessExecutor {
             String s;
             while ((s = stdInput.readLine()) != null) {
                 System.out.println("----" + s);
-                flags.setInputMsg(flags.getInputMsg() + s + "\n");
+                flags.appendInputMsg(s + "\n");
                 flags.setReadInput(true);
             }
 
@@ -59,7 +78,7 @@ public class ProcessExecutor {
             System.out.println("Here is the standard error of the command (if any):\n");
             while ((s = stdError.readLine()) != null) {
                 System.err.println("xxxxx" + s);
-                flags.setErrMsg(flags.getErrMsg() + s + "\n");
+                flags.appendErrMsg(s + "\n");
                 flags.setReadError(true);
             }
         }
@@ -70,8 +89,10 @@ public class ProcessExecutor {
 
         private boolean readInput;
         private String inputMsg = "";
+        private String lastInputMsg = "";
         private boolean readError;
         private String errMsg = "";
+        private String lastErrMsg = "";
 
         public boolean isReadInput() {
             return readInput;
@@ -93,18 +114,35 @@ public class ProcessExecutor {
             return inputMsg;
         }
 
-        public void setInputMsg(String inputMsg) {
-            this.inputMsg = inputMsg;
+        public void appendInputMsg(String inputMsg) {
+            this.inputMsg = getInputMsg() + inputMsg;
+            this.lastInputMsg = inputMsg;
         }
 
         public String getErrMsg() {
             return errMsg;
         }
 
-        public void setErrMsg(String errMsg) {
-            this.errMsg = errMsg;
+        public void appendErrMsg(String errMsg) {
+            this.errMsg = getErrMsg() + errMsg;
+            this.lastErrMsg = errMsg;
         }
 
+        public String getLastInputMsg() {
+            return lastInputMsg;
+        }
+
+        public void setLastInputMsg(String lastInputMsg) {
+            this.lastInputMsg = lastInputMsg;
+        }
+
+        public String getLastErrMsg() {
+            return lastErrMsg;
+        }
+
+        public void setLastErrMsg(String lastErrMsg) {
+            this.lastErrMsg = lastErrMsg;
+        }
     }
 
 }

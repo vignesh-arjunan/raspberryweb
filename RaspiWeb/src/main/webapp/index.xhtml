@@ -110,16 +110,21 @@
                         </h:form>
                     </p:tab>                    
 
-                    <p:tab title="Play from Youtube (Experimental)" style="margin-bottom:20px">
+                    <p:tab title="Play from Youtube" style="margin-bottom:20px">
                         <h:form id="youtubeForm">
                             <h:panelGrid columns="2" cellpadding="5">
-                                <p:outputLabel for="name" value="Shareable Youtube link :" />
-                                <p:inputText id="name" value="#{mediaBean.youtubeURL}" required="true" requiredMessage="URL is needed" size="30" />           
-                                <p:spacer />
-                                <h:panelGrid columns="2" cellpadding="5">
-                                    <p:commandButton value="Play" actionListener="#{mediaBean.playFromURL()}" update="messages1,:tabView:accordionPanel1:youtubeForm" />
-                                    <p:commandButton value="Reset" actionListener="#{mediaBean.clearYoutubeURL()}" update="youtubeForm" />
+                                <p:outputLabel for="name" value="Youtube link :" />
+                                <p:inputText id="name" value="#{mediaBean.youtubeURL}" size="60" />           
+                                <p:outputLabel value="Streaming needs fast/uninterrupted internet" />
+                                <h:panelGrid columns="3" cellpadding="5">
+                                    <p:commandButton value="Stream the Video" actionListener="#{mediaBean.playFromURI()}" update="messages1,:tabView:accordionPanel1:youtubeForm" />
+                                    <p:commandButton value="Download the Video" actionListener="#{mediaBean.downloadFromURI()}" update="messages1,:tabView:accordionPanel1:youtubeForm" />
+                                    <p:commandButton value="Clear" actionListener="#{mediaBean.clearYoutubeURL()}" update="youtubeForm" />                                
                                 </h:panelGrid>
+                                <p:outputLabel rendered="#{mediaBean.isDownloading}" value="Downloading #{mediaBean.lastIssuedDownloadURL}" /> 
+                                <p:commandButton value="Cancel Download" actionListener="#{mediaBean.youtube.killAllYoutubeDl()}" update="youtubeForm" />
+                                <p:commandButton value="Refresh"  update="youtubeForm" />
+                                <p:outputLabel rendered="#{mediaBean.isDownloading}" value="Status #{mediaBean.lastDownloadMsg}"  />
                                 <p:growl id="messages1" showDetail="true" />
                             </h:panelGrid>
                         </h:form>
@@ -193,13 +198,13 @@
                                     <p:selectBooleanCheckbox value="#{clockBean.alarmEntry.playList}">
                                         <p:ajax update="chooseMedia, playListSelection" />
                                     </p:selectBooleanCheckbox>
-                                    
+
                                     <p:outputLabel value="Selected Play List : " />
                                     <p:selectOneButton id="playListSelection" value="#{clockBean.alarmEntry.selectedPlayListIndex}" disabled="#{!clockBean.alarmEntry.playList}">
                                         <f:selectItems value="#{playListBean.allIndices}" />     
                                         <p:ajax update=":tabView:accordionPanel2:alarmForm:playListSelection" />
                                     </p:selectOneButton>
-                                    
+
                                 </h:panelGrid>
                             </p:fieldset>
                             <p:commandButton value="#{clockBean.buttonLabel}" actionListener="#{clockBean.addEditAlarm()}" update="messages1,:tabView:accordionPanel2:alarmForm,:tabView:accordionPanel2:alarmListForm" />

@@ -117,7 +117,7 @@ public class UpdateBean {
         }
     }
 
-    public void updateSoftware() {
+    public synchronized void updateSoftware() {
         FacesContext context = FacesContext.getCurrentInstance();
         if (updateInProgress) {
             if (context != null) {
@@ -146,6 +146,7 @@ public class UpdateBean {
                 }
             } catch (IOException | InterruptedException ex) {
                 Logger.getLogger(UpdateBean.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
                 updateInProgress = false;
             }
         }).start();
