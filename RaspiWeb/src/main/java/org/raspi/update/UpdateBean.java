@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.raspi.timer.PreferencesBean;
 import org.raspi.utils.CheckNetworkAndRebootOrNotify;
+import static org.raspi.utils.Constants.BACKUP;
 import static org.raspi.utils.Constants.DESTINATION;
 import static org.raspi.utils.Constants.SOURCE;
 import static org.raspi.utils.Constants.TEMP;
@@ -36,6 +37,7 @@ public class UpdateBean {
     private boolean updateAvailable;
     private Integer progress = 0;
     private boolean updateInProgress;
+    private boolean downloadSuccessful;
 
     public Integer getProgress() {
         return progress;
@@ -68,14 +70,21 @@ public class UpdateBean {
 
     @PreDestroy
     void destroy() {
-        if (updateInProgress) { // deploying lastest when update was triggered
-            try {
-                Files.move(TEMP.toPath(), DESTINATION.toPath(), StandardCopyOption.ATOMIC_MOVE);
-            } catch (IOException ex) {
-                Logger.getLogger(UpdateBean.class.getName()).log(Level.SEVERE, null, ex);
+        try {
+            if (downloadSuccessful) { // deploying lastest 
+                Files.copy(TEMP.toPath(), DESTINATION.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+                CheckNetworkAndRebootOrNotify.reboot();
+            } else if (BACKUP.exists()) { // deploying backup
+                Files.copy(BACKUP.toPath(), DESTINATION.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+                CheckNetworkAndRebootOrNotify.reboot();
+            } else {
+                // doing nothing
             }
+        } catch (IOException ex) {
+            Logger.getLogger(UpdateBean.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("Finished");
+
     }
 
     public void savePreferences() throws IOException {
@@ -141,10 +150,13 @@ public class UpdateBean {
             try {
                 if (updateManager.isUpdateAvailable() && !updateInProgress) {
                     updateInProgress = true;
-                    updateManager.downloadLatestAndUndeployCurrent();
-                    CheckNetworkAndRebootOrNotify.reboot();
+                    if (downloadSuccessful = updateManager.downloadLatest()) {
+                        Files.deleteIfExists(BACKUP.toPath());
+                        Files.copy(DESTINATION.toPath(), BACKUP.toPath(), StandardCopyOption.COPY_ATTRIBUTES); // taking backup
+                        Files.delete(DESTINATION.toPath()); // triggering undeploy after successful download
+                    }
                 }
-            } catch (IOException | InterruptedException ex) {
+            } catch (Throwable ex) {
                 Logger.getLogger(UpdateBean.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 updateInProgress = false;
