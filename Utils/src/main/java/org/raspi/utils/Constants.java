@@ -39,5 +39,6 @@ public class Constants {
     public static final File DESTINATION = new File("/etc/glassfish4/glassfish/domains/domain1/autodeploy/RaspiWeb.war");
 //    public static final File DESTINATION = new File("/Users/vignesh/RaspiWeb.war");    
     public static final File TEMP = new File("/tmp/RaspiWeb.war");
+    public static final File BACKUP = new File("/home/pi/RaspiWeb.war.backup");
     public static final int NO_OF_PLAYLISTS = 5;
 }

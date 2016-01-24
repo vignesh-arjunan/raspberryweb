@@ -122,9 +122,9 @@
                                     <p:commandButton value="Clear" actionListener="#{mediaBean.clearYoutubeURL()}" update="youtubeForm" />                                
                                 </h:panelGrid>
                                 <p:outputLabel rendered="#{mediaBean.isDownloading}" value="Downloading #{mediaBean.lastIssuedDownloadURL}" /> 
-                                <p:commandButton value="Cancel Download" actionListener="#{mediaBean.youtube.killAllYoutubeDl()}" update="youtubeForm" />
-                                <p:commandButton value="Refresh"  update="youtubeForm" />
+                                <p:commandButton rendered="#{mediaBean.isDownloading}" value="Cancel Download" actionListener="#{mediaBean.youtube.killAllYoutubeDl()}" update="youtubeForm" />                                
                                 <p:outputLabel rendered="#{mediaBean.isDownloading}" value="Status #{mediaBean.lastDownloadMsg}"  />
+                                <p:commandButton rendered="#{mediaBean.isDownloading}" value="Refresh"  update="youtubeForm" />
                                 <p:growl id="messages1" showDetail="true" />
                             </h:panelGrid>
                         </h:form>

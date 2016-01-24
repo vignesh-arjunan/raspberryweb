@@ -5,9 +5,7 @@
  */
 package org.raspi.utils;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,24 +59,27 @@ public class UpdateManager {
         System.out.println("isUpdateAvailable " + isUpdateAvailable);
     }
 
-    public void downloadLatestAndUndeployCurrent() throws IOException, MalformedURLException, FileNotFoundException, InterruptedException {
+    public boolean downloadLatest() throws IOException {
         if (!isUpdateAvailable) {
             throw new IllegalStateException("Update not available !!!");
         }
         URL url = new URL(source);
         Files.deleteIfExists(temp.toPath());
-        try (InputStream in = new BufferedInputStream(url.openStream());
-                FileOutputStream fos = new FileOutputStream(temp)) {
+        try (FileOutputStream fos = new FileOutputStream(temp)) {
             byte[] buf = new byte[1024];
             int n;
+            InputStream in = url.openStream();
             while ((n = in.read(buf)) != -1) {
                 fos.write(buf, 0, n);
+                fos.flush();
                 totalDownloaded += n;
-                System.out.println(new Double((100.0 * getTotalDownloaded()) / getContentLength()).intValue());
+                System.out.println("Progress " + new Double((100.0 * getTotalDownloaded()) / getContentLength()).intValue());
             }
         }
         System.out.println("total " + totalDownloaded);
-        Files.delete(destination.toPath());        
+        System.out.println("getTotalDownloaded() " + getTotalDownloaded());
+        System.out.println("getContentLength() " + getContentLength());
+        return getTotalDownloaded() == getContentLength();
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -89,9 +90,9 @@ public class UpdateManager {
         Thread thread = new Thread(() -> {
             try {
                 if (updateManager.isUpdateAvailable()) {
-                    updateManager.downloadLatestAndUndeployCurrent();
+                    updateManager.downloadLatest();
                 }
-            } catch (IOException | InterruptedException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(UpdateManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         });

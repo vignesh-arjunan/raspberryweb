@@ -337,7 +337,7 @@ public class MediaBean implements Runnable {
                         youtube = new Youtube();
                         youtube.download(new URI(youtubeURL.trim()).toString());
                     }
-                } catch (IOException | URISyntaxException ex) {
+                } catch (URISyntaxException | IOException ex) {
                     Logger.getLogger(MediaBean.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                     isDownloading = false;
