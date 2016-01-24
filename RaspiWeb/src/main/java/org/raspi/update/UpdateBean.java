@@ -130,7 +130,7 @@ public class UpdateBean {
         FacesContext context = FacesContext.getCurrentInstance();
         if (updateInProgress) {
             if (context != null) {
-                context.addMessage(null, new FacesMessage("In Progress", "Update is in Progress"));
+                context.addMessage(null, new FacesMessage("In Progress", "Download is in Progress"));
             }
             return;
         }
@@ -138,10 +138,10 @@ public class UpdateBean {
         UpdateManager updateManager;
         try {
             updateManager = new UpdateManager(SOURCE, DESTINATION, TEMP);
-        } catch (IOException ex) {
+        } catch (Throwable ex) {
             Logger.getLogger(UpdateBean.class.getName()).log(Level.SEVERE, null, ex);
             if (context != null) {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Could not update software"));
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Failed", "Could not download software"));
             }
             return;
         }
@@ -164,7 +164,7 @@ public class UpdateBean {
         }).start();
 
         if (context != null) {
-            context.addMessage(null, new FacesMessage("In Progress", "Update is in Progress"));
+            context.addMessage(null, new FacesMessage("Download Started", "Download is in Progress"));
         }
     }
 
