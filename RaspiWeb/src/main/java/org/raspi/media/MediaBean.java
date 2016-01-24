@@ -61,6 +61,7 @@ public class MediaBean implements Runnable {
     private int selectedPlayListIndex = 1;
     private boolean isDownloading;
     private String lastIssuedDownloadURL;
+    private boolean waslastIssuedDownloadFailure;
     private Youtube youtube;
 
     public String getLastDownloadMsg() {
@@ -69,13 +70,20 @@ public class MediaBean implements Runnable {
                 && youtube.getProcessExecutor().isBlocking()) {
             return youtube.getProcessExecutor().getFlags().getLastInputMsg();
         } else {
+            if (waslastIssuedDownloadFailure) {
+                FacesMessage message = new FacesMessage("Could not Download", "Could not download from " + lastIssuedDownloadURL);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            } else {
+                FacesMessage message = new FacesMessage("Download Complete", "Downloaded from " + lastIssuedDownloadURL);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
             return "No Active Download in progress";
         }
     }
 
     public Youtube getYoutube() {
         return youtube;
-    }        
+    }
 
     public boolean isIsDownloading() {
         return isDownloading;
@@ -330,14 +338,16 @@ public class MediaBean implements Runnable {
             }
             new URI(youtubeURL.trim()).toString();
             lastIssuedDownloadURL = youtubeURL;
+            waslastIssuedDownloadFailure = false;
             new Thread(() -> {
                 try {
                     if (!isDownloading) {
                         isDownloading = true;
                         youtube = new Youtube();
-                        youtube.download(new URI(youtubeURL.trim()).toString());
+                        youtube.download(new URI(lastIssuedDownloadURL.trim()).toString());
                     }
-                } catch (URISyntaxException | IOException ex) {
+                } catch (Throwable ex) {
+                    waslastIssuedDownloadFailure = true;
                     Logger.getLogger(MediaBean.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                     isDownloading = false;

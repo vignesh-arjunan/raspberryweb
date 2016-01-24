@@ -56,7 +56,8 @@ public class Youtube {
         processExecutor = new ProcessExecutor(commands);
         Flags ifconfigFlags = processExecutor.startExecution();
         if (ifconfigFlags.getErrMsg().length() > 0) {
-            throw new IllegalArgumentException("URL invalid " + youtubeURL);
+            killAllYoutubeDl();
+            throw new IllegalArgumentException(ifconfigFlags.getErrMsg());
         }
         return ifconfigFlags.getInputMsg();
     }
