@@ -65,19 +65,28 @@ public class MediaBean implements Runnable {
     private Youtube youtube;
 
     public String getLastDownloadMsg() {
+        System.out.println("in getLastDownloadMsg");
         if (youtube != null
                 && youtube.getProcessExecutor().isStarted()
                 && youtube.getProcessExecutor().isBlocking()) {
             return youtube.getProcessExecutor().getFlags().getLastInputMsg();
+        }
+        System.out.println("waslastIssuedDownloadFailure " + waslastIssuedDownloadFailure);
+        System.out.println("No Active Download in progress");
+        return "No Active Download in progress";
+    }
+
+    public void getLastDownloadStatus() {
+        System.out.println("in getLastDownloadStatus");
+        if (waslastIssuedDownloadFailure && lastIssuedDownloadURL != null) {
+            FacesMessage message = new FacesMessage("Could not Download", "Could not download from " + lastIssuedDownloadURL);
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        } else if (!waslastIssuedDownloadFailure && lastIssuedDownloadURL != null) {
+            FacesMessage message = new FacesMessage("Download Complete", "Downloaded from " + lastIssuedDownloadURL);
+            FacesContext.getCurrentInstance().addMessage(null, message);
         } else {
-            if (waslastIssuedDownloadFailure) {
-                FacesMessage message = new FacesMessage("Could not Download", "Could not download from " + lastIssuedDownloadURL);
-                FacesContext.getCurrentInstance().addMessage(null, message);
-            } else {
-                FacesMessage message = new FacesMessage("Download Complete", "Downloaded from " + lastIssuedDownloadURL);
-                FacesContext.getCurrentInstance().addMessage(null, message);
-            }
-            return "No Active Download in progress";
+            FacesMessage message = new FacesMessage("No Active Download", "No Active Download in progress");
+            FacesContext.getCurrentInstance().addMessage(null, message);
         }
     }
 
