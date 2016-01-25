@@ -82,8 +82,13 @@ public class MediaBean implements Runnable {
             FacesMessage message = new FacesMessage("Could not Download", "Could not download from " + lastIssuedDownloadURL);
             FacesContext.getCurrentInstance().addMessage(null, message);
         } else if (!waslastIssuedDownloadFailure && lastIssuedDownloadURL != null) {
-            FacesMessage message = new FacesMessage("Download Complete", "Downloaded from " + lastIssuedDownloadURL);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            if (isDownloading) {
+                FacesMessage message = new FacesMessage("Download in progress", "Downloading from " + lastIssuedDownloadURL);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            } else {
+                FacesMessage message = new FacesMessage("Download Complete", "Downloaded from " + lastIssuedDownloadURL);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
         } else {
             FacesMessage message = new FacesMessage("No Active Download", "No Active Download in progress");
             FacesContext.getCurrentInstance().addMessage(null, message);
