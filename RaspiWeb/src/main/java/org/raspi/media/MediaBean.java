@@ -359,6 +359,7 @@ public class MediaBean implements Runnable {
                         isDownloading = true;
                         youtube = new Youtube();
                         youtube.download(new URI(lastIssuedDownloadURL.trim()).toString());
+                        loadMediaFiles();
                     }
                 } catch (Throwable ex) {
                     waslastIssuedDownloadFailure = true;
