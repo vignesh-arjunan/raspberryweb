@@ -72,10 +72,10 @@ public class UpdateBean {
     void destroy() {
         try {
             if (downloadSuccessful) { // deploying lastest 
-                Files.copy(TEMP.toPath(), DESTINATION.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+                Files.copy(TEMP.toPath(), DESTINATION.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 CheckNetworkAndRebootOrNotify.reboot();
             } else if (BACKUP.exists()) { // deploying backup
-                Files.copy(BACKUP.toPath(), DESTINATION.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+                Files.copy(BACKUP.toPath(), DESTINATION.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 CheckNetworkAndRebootOrNotify.reboot();
             } else {
                 // doing nothing
@@ -152,7 +152,7 @@ public class UpdateBean {
                     updateInProgress = true;
                     if (downloadSuccessful = updateManager.downloadLatest()) {
                         Files.deleteIfExists(BACKUP.toPath());
-                        Files.copy(DESTINATION.toPath(), BACKUP.toPath(), StandardCopyOption.COPY_ATTRIBUTES); // taking backup
+                        Files.copy(DESTINATION.toPath(), BACKUP.toPath(), StandardCopyOption.REPLACE_EXISTING); // taking backup
                         Files.delete(DESTINATION.toPath()); // triggering undeploy after successful download
                     }
                 }
