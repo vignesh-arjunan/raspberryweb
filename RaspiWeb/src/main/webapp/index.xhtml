@@ -122,7 +122,7 @@
                                     <p:commandButton value="Clear" actionListener="#{mediaBean.clearYoutubeURL()}" update="youtubeForm" />                                
                                 </h:panelGrid>
                                 <p:commandButton rendered="#{mediaBean.isDownloading}" value="Cancel Download" actionListener="#{mediaBean.youtube.killAllYoutubeDl()}" update="youtubeForm" />                             
-                                <p:outputLabel rendered="#{mediaBean.isDownloading}" value="Downloading #{mediaBean.lastIssuedDownloadURL}" />                                 
+                                <p:outputLabel rendered="#{mediaBean.isDownloading}" value="Downloading #{mediaBean.getLastIssuedDownloadURL()}" />                                 
                                 
                                 <p:commandButton actionListener="#{mediaBean.getLastDownloadStatus()}" value="Get latest Download Status"  update="youtubeForm,:tabView:accordionPanel1:mediaForm" />
                                 <p:outputLabel rendered="#{mediaBean.isDownloading}" value="Status #{mediaBean.lastDownloadMsg}"  />                                
