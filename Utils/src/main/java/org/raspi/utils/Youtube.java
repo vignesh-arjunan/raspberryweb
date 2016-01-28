@@ -38,14 +38,14 @@ public class Youtube {
         commands.add("-e");
         commands.add("youtube-dl");
         ProcessExecutor killer = new ProcessExecutor(commands);
-        killer.startExecutionNonBlocking();
+        killer.startExecution();
 
         commands.clear();
         commands.add("/bin/rm");
         commands.add("-f");
         commands.add("/home/pi/*.part");
         ProcessExecutor partFileRemoves = new ProcessExecutor(commands);
-        partFileRemoves.startExecutionNonBlocking();
+        partFileRemoves.startExecution();
     }
 
     private ProcessExecutor processExecutor;
@@ -57,6 +57,7 @@ public class Youtube {
     }
 
     public String download() throws IOException {
+        killAllYoutubeDl();
         List<String> commands = new ArrayList<>();
         commands.add("/usr/local/bin/youtube-dl");
         commands.add(youtubeURL);
@@ -69,12 +70,13 @@ public class Youtube {
         return ifconfigFlags.getInputMsg();
     }
 
-    public File getFile() throws IOException {
-
+    public File getFile() throws IOException {        
+        System.out.println("file " + file);
         if (file != null) {
             return file;
         }
-
+        
+        killAllYoutubeDl();
         List<String> commands = new ArrayList<>();
         commands.add("/usr/local/bin/youtube-dl");
         commands.add("--get-filename");
@@ -82,7 +84,6 @@ public class Youtube {
         ProcessExecutor getFileProcessExecutor = new ProcessExecutor(commands);
         Flags ifconfigFlags = getFileProcessExecutor.startExecution();
         if (ifconfigFlags.getErrMsg().length() > 0) {
-            killAllYoutubeDl();
             throw new IllegalArgumentException(ifconfigFlags.getErrMsg());
         }
         return file = new File(ifconfigFlags.getInputMsg());
