@@ -39,13 +39,16 @@ public class Youtube {
         commands.add("youtube-dl");
         ProcessExecutor killer = new ProcessExecutor(commands);
         killer.startExecution();
+    }
 
-        commands.clear();
+    public void removePartialFiles() throws IOException {
+        System.out.println("Removing part files");
+        List<String> commands = new ArrayList<>();
         commands.add("/bin/rm");
         commands.add("-f");
         commands.add("/home/pi/*.part");
-        ProcessExecutor partFileRemoves = new ProcessExecutor(commands);
-        partFileRemoves.startExecution();
+        ProcessExecutor partFileRemover = new ProcessExecutor(commands);
+        partFileRemover.startExecution();
     }
 
     private ProcessExecutor processExecutor;
@@ -56,8 +59,9 @@ public class Youtube {
         this.youtubeURL = youtubeURL;
     }
 
-    public String download() throws IOException {
+    public String download() throws IOException {        
         killAllYoutubeDl();
+        removePartialFiles();
         List<String> commands = new ArrayList<>();
         commands.add("/usr/local/bin/youtube-dl");
         commands.add(youtubeURL);
@@ -70,12 +74,12 @@ public class Youtube {
         return ifconfigFlags.getInputMsg();
     }
 
-    public File getFile() throws IOException {        
+    public File getFile() throws IOException {
         System.out.println("file " + file);
         if (file != null) {
             return file;
         }
-        
+
         killAllYoutubeDl();
         List<String> commands = new ArrayList<>();
         commands.add("/usr/local/bin/youtube-dl");

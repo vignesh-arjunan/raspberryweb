@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 public class ProcessExecutor {
 
-    private final List<String> command;
+    private final List<String> commands;
     private Process process;
     private Flags flags;
     private boolean started;
@@ -21,11 +21,14 @@ public class ProcessExecutor {
 
     public ProcessExecutor(List<String> command) {
         Objects.requireNonNull(command, "command cannot be null");
-        this.command = command;
+        this.commands = command;
     }
 
     public void startExecutionNonBlocking() throws IOException {
-        ProcessBuilder pb = new ProcessBuilder(command);
+        ProcessBuilder pb = new ProcessBuilder(commands);
+        System.out.println("commands");
+        commands.forEach(System.out::print);
+        System.out.println();
         process = pb.start();
         started = true;
         blocking = false;
@@ -56,7 +59,10 @@ public class ProcessExecutor {
 
     public Flags startExecution() throws IOException {
 
-        ProcessBuilder pb = new ProcessBuilder(command);
+        ProcessBuilder pb = new ProcessBuilder(commands);
+        System.out.println("commands");
+        commands.forEach(System.out::print);
+        System.out.println();
         process = pb.start();
         flags = new Flags();
         started = true;

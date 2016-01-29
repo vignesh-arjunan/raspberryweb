@@ -8,8 +8,16 @@
             <base-name>/Bundle</base-name>
             <var>bundle</var>
         </resource-bundle>
+        <el-resolver>
+            org.primefaces.application.exceptionhandler.PrimeExceptionHandlerELResolver
+        </el-resolver>
     </application>
     <lifecycle>
         <phase-listener id="nocache">org.raspi.phaselistener.CacheControlPhaseListener</phase-listener>
     </lifecycle>
+    <factory>
+        <exception-handler-factory>
+            org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory
+        </exception-handler-factory>
+    </factory>
 </faces-config>
