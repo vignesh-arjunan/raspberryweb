@@ -15,6 +15,23 @@
             <p:graphicImage name="images/ajax_loading_bar.gif" />
         </p:dialog>  
 
+        <p:ajaxExceptionHandler type="javax.faces.application.ViewExpiredException"
+                                update="exceptionDialog"
+                                onexception="PF('exceptionDialog').show();" />
+
+        <p:ajaxExceptionHandler type="java.lang.NullPointerException"
+                                update="exceptionDialog"
+                                onexception="PF('exceptionDialog').show();" />
+
+        <p:ajaxExceptionHandler type="java.lang.IllegalStateException"
+                                update="exceptionDialog"
+                                onexception="PF('exceptionDialog').show();" />                
+
+        <p:dialog id="exceptionDialog" header="Error occured!" widgetVar="exceptionDialog" height="100px">
+            Message: An error was encountered <br/>            
+            <p:button onclick="document.location.href = document.location.href;" value="Reload to Continue!" />
+        </p:dialog>
+
         <p:tabView id="tabView">
             <p:tab title="Media">
 
@@ -123,7 +140,7 @@
                                 </h:panelGrid>
                                 <p:commandButton rendered="#{mediaBean.isDownloading}" value="Cancel Download" actionListener="#{mediaBean.youtube.killAllYoutubeDl()}" update="youtubeForm" />                             
                                 <p:outputLabel rendered="#{mediaBean.isDownloading}" value="Downloading #{mediaBean.getLastIssuedDownloadURL()}" />                                 
-                                
+
                                 <p:commandButton actionListener="#{mediaBean.getLastDownloadStatus()}" value="Get latest Download Status"  update="youtubeForm,:tabView:accordionPanel1:mediaForm" />
                                 <p:outputLabel rendered="#{mediaBean.isDownloading}" value="Status #{mediaBean.lastDownloadMsg}"  />                                
                                 <p:growl id="messages1" showDetail="true" />
