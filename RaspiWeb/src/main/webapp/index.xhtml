@@ -27,9 +27,11 @@
                                 update="exceptionDialog"
                                 onexception="PF('exceptionDialog').show();" />                
 
-        <p:dialog id="exceptionDialog" header="Error occured!" widgetVar="exceptionDialog" height="100px">
-            Message: An error was encountered <br/>            
-            <p:button onclick="document.location.href = document.location.href;" value="Reload to Continue!" />
+        <p:dialog id="exceptionDialog" header="Error occured!" widgetVar="exceptionDialog" height="70px" closable="false" resizable="false">
+            <h:panelGrid columns="1" cellpadding="2">
+                <p:outputLabel value="Message: An error was encountered" />
+                <p:button onclick="location.reload();" value="Reload to Continue!" />
+            </h:panelGrid>
         </p:dialog>
 
         <p:tabView id="tabView">
