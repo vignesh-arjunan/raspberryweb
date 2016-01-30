@@ -99,7 +99,7 @@
                             <p:fieldset legend="Selected Play List Controls" style="margin-bottom:20px">
                                 <h:panelGrid columns="2" cellpadding="5">
                                     <p:commandButton value="Play Selected Play List" actionListener="#{mediaBean.playAll}" update=":tabView:accordionPanel1:playListForm" />
-                                    <p:commandButton value="Clear Seleced Play List"  actionListener="#{playListBean.clearPlayList()}" update=":tabView:accordionPanel1:playListForm" />
+                                    <p:commandButton value="Clear Selected Play List"  actionListener="#{playListBean.clearPlayList()}" update=":tabView:accordionPanel1:playListForm" />
                                     <p:outputLabel value="Selected Play List : " />
                                     <p:selectOneButton id="playListSelection" value="#{playListBean.selectedTabIndex}" >
                                         <f:selectItems value="#{playListBean.allIndices}" />     
