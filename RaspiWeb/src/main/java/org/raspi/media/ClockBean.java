@@ -41,7 +41,6 @@ public class ClockBean {
     private PreferencesBean preferencesBean;
     @Inject
     private MediaBean mediaBean;
-    private MediaPlayer mediaPlayer;
     private boolean addMode = true;
     private boolean isVideoPlaying = false;
     
@@ -131,7 +130,7 @@ public class ClockBean {
         }).forEach((AlarmEntry alarmEntryItem) -> {
             try {
                 if (!alarmEntryItem.isPlayList()) {
-                    (mediaPlayer = new MediaPlayer(new File(PARENT_MEDIA_DIR + File.separator + alarmEntryItem.getChosenMedia()))).play(true);
+                    (new MediaPlayer(new File(PARENT_MEDIA_DIR + File.separator + alarmEntryItem.getChosenMedia()))).play(true);
                     return;
                 }
                 mediaBean.playAll(alarmEntryItem.getSelectedPlayListIndex() - 1);
