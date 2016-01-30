@@ -94,6 +94,15 @@ public class MediaBean implements Runnable {
         }
     }
 
+    public void cancelDownload() throws IOException {
+        if (isDownloading) {
+            youtube.killAllYoutubeDl();
+            isDownloading = false;
+            waslastIssuedDownloadFailure = false;
+            youtube = null;
+        }
+    }
+
     public Youtube getYoutube() {
         return youtube;
     }
@@ -108,7 +117,7 @@ public class MediaBean implements Runnable {
 
     public String getLastIssuedDownloadURL() throws IOException {
         return youtube != null ? youtube.getFile().getName() : "";
-    }   
+    }
 
     public MediaPlayer getMediaPlayer() {
         return mediaPlayer;
