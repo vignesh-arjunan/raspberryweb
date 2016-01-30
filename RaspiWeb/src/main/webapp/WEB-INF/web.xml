@@ -10,9 +10,9 @@
         <load-on-startup>1</load-on-startup>
         <multipart-config>
             <location>/tmp</location>
-            <max-file-size>20848820</max-file-size>
-            <max-request-size>418018841</max-request-size>
-            <file-size-threshold>1048576</file-size-threshold>
+            <max-file-size>5000000000</max-file-size>
+            <max-request-size>5000000000</max-request-size>
+            <file-size-threshold>10000</file-size-threshold>
         </multipart-config>
     </servlet>
     <context-param>
@@ -52,6 +52,6 @@
     </filter-mapping>
     <error-page>
         <exception-type>java.lang.Throwable</exception-type>
-        <location>/index.xhtml</location>
+        <location>/</location>
     </error-page>   
 </web-app>

@@ -27,7 +27,7 @@
                                 update="exceptionDialog"
                                 onexception="PF('exceptionDialog').show();" />                
 
-        <p:dialog id="exceptionDialog" header="Error occured!" widgetVar="exceptionDialog" height="70px" closable="false" resizable="false">
+        <p:dialog id="exceptionDialog" header="Error occured!" widgetVar="exceptionDialog" height="70px" closable="false" resizable="false" modal="true" draggable="false">
             <h:panelGrid columns="1" cellpadding="2">
                 <p:outputLabel value="Message: An error was encountered" />
                 <p:button onclick="location.reload();" value="Reload to Continue!" />
