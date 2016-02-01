@@ -35,7 +35,7 @@
         </p:dialog>
 
         <p:tabView id="tabView">
-            <p:tab title="Media">
+            <p:tab title="Media Centre">
 
                 <h:form id="mediaControlsForm">
                     <p:growl id="messages7" showDetail="true" />
@@ -153,7 +153,7 @@
                 </p:tabView>
             </p:tab>
 
-            <p:tab title="Clock">
+            <p:tab title="Alarm Clock">
                 <p:tabView id="accordionPanel2">
                     <p:tab title="Alarm" style="margin-bottom:20px">
                         <h:form id="alarmForm">
@@ -267,7 +267,7 @@
                 </p:tabView>
             </p:tab>
 
-            <p:tab title="Motion">
+            <p:tab title="Motion Detection">
                 <p:tabView id="accordionPanel3"> 
                     <p:tab title="Motion Detection" style="margin-bottom:20px">
                         <h:form id="motionForm">
@@ -316,11 +316,11 @@
                                     <p:selectBooleanCheckbox value="#{motionBean.startMotionOnStartup}">
                                         <p:ajax />
                                     </p:selectBooleanCheckbox>
-                                    <p:outputLabel value="Email Event Start :" />
+                                    <p:outputLabel value="Email Motion Detection Event Start :" />
                                     <p:selectBooleanCheckbox value="#{watcherBean.notifyEventStart}">
                                         <p:ajax />
                                     </p:selectBooleanCheckbox>
-                                    <p:outputLabel value="Email Attachment &amp; Delete :" />
+                                    <p:outputLabel value="Email Motion Detection Attachment &amp; Delete :" />
                                     <p:selectBooleanCheckbox value="#{watcherBean.notifyAttachment}">
                                         <p:ajax />
                                     </p:selectBooleanCheckbox>     
@@ -396,7 +396,7 @@
                 </p:tabView>
             </p:tab>
 
-            <p:tab title="Update">
+            <p:tab title="Software Update">
                 <p:tabView id="accordionPanel5">
                     <p:tab title="Software Update Manager" style="margin-bottom:20px">
                         <h:form id="updateForm">
