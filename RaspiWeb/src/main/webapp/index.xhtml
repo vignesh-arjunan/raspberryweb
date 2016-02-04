@@ -62,10 +62,10 @@
                                 <f:facet name="header">
                                     Available Storage : #{mediaBean.getFreeMemUsage()} Bytes / Total Storage : #{mediaBean.getTotalMemUsage()} Bytes
                                     <br/>
-                                    <p:commandButton value="Play" update=":tabView:accordionPanel1" action="#{mediaBean.playSelectedFile()}" />
-                                    <p:commandButton value="Refresh" update=":tabView:accordionPanel1" action="#{mediaBean.loadMediaFiles()}" />
-                                    <p:commandButton value="Remove" update=":tabView:accordionPanel1" action="#{mediaBean.deleteSelectedFile()}" />
-                                    <p:commandButton value="Add to Play List : " update=":tabView:accordionPanel1" action="#{mediaBean.addSelectedFile()}" />    
+                                    <p:commandButton value="Play" update=":tabView:accordionPanel1:mediaForm" action="#{mediaBean.playSelectedFile()}" />
+                                    <p:commandButton value="Refresh" update=":tabView:accordionPanel1:mediaForm" action="#{mediaBean.loadMediaFiles()}" />
+                                    <p:commandButton value="Remove" update=":tabView:accordionPanel1:mediaForm" action="#{mediaBean.deleteSelectedFile()}" />
+                                    <p:commandButton value="Add to Play List : " update=":tabView:accordionPanel1:mediaForm" action="#{mediaBean.addSelectedFile()}" />    
                                     <p:selectOneButton id="playListSelection" value="#{mediaBean.selectedPlayListIndex}"  >
                                         <f:selectItems value="#{playListBean.allIndices}" />            
                                         <p:ajax update=":tabView:accordionPanel1:mediaForm" />
@@ -123,17 +123,18 @@
                     <p:tab title="Upload Media" style="margin-bottom:20px">
 
                         <h:form id="uploadForm" enctype="multipart/form-data">
+                            <p:outputLabel value="Do not refresh the page while upload is in progress..." />                            
                             <p:fileUpload fileUploadListener="#{fileUploadBean.handleFileUpload}" mode="advanced" update="messages,:tabView:accordionPanel1:mediaForm" auto="true" sizeLimit="1000000000" allowTypes="/(\.|\/)(mp3|MP3|mp4|MP4|flv|FLV|mov|MOV|avi|AVI)$/" />
 
                             <p:growl id="messages" showDetail="true" />
                         </h:form>
                     </p:tab>                    
 
-                    <p:tab title="Play from Youtube" style="margin-bottom:20px">
+                    <p:tab title="Play from Video Sites" style="margin-bottom:20px">
                         <h:form id="youtubeForm">
                             <h:panelGrid columns="2" cellpadding="5">
-                                <p:outputLabel for="name" value="Youtube link :" />
-                                <p:inputText id="name" value="#{mediaBean.youtubeURL}" size="60" />           
+                                <p:outputLabel for="name" value="Video Site link (Youtube, Vimeo etc..):" />
+                                <p:inputText id="name" value="#{mediaBean.youtubeURL}" size="40" />           
                                 <p:outputLabel value="Streaming needs fast/uninterrupted internet" />
                                 <h:panelGrid columns="3" cellpadding="5">
                                     <p:commandButton value="Stream the Video" actionListener="#{mediaBean.playFromURI()}" update="messages1,:tabView:accordionPanel1:youtubeForm" />
