@@ -27,7 +27,7 @@ public class ProcessExecutor {
     public void startExecutionNonBlocking() throws IOException {
         ProcessBuilder pb = new ProcessBuilder(commands);
         System.out.println("commands");
-        commands.forEach(System.out::print);
+        commands.forEach(cmd -> System.out.print(cmd + " "));
         System.out.println();
         process = pb.start();
         started = true;
