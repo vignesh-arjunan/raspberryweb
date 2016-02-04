@@ -124,7 +124,7 @@
 
                         <h:form id="uploadForm" enctype="multipart/form-data">
                             <p:outputLabel value="Do not refresh the page while upload is in progress..." />                            
-                            <p:fileUpload fileUploadListener="#{fileUploadBean.handleFileUpload}" mode="advanced" update="messages,:tabView:accordionPanel1:mediaForm" auto="true" sizeLimit="1000000000" allowTypes="/(\.|\/)(mp3|MP3|mp4|MP4|flv|FLV|mov|MOV|avi|AVI)$/" />
+                            <p:fileUpload fileUploadListener="#{fileUploadBean.handleFileUpload}" mode="advanced" update="messages,:tabView:accordionPanel1:mediaForm" auto="true" sizeLimit="5000000000" allowTypes="/(\.|\/)(mp3|MP3|mp4|MP4|flv|FLV|mov|MOV|avi|AVI)$/" />
 
                             <p:growl id="messages" showDetail="true" />
                         </h:form>
