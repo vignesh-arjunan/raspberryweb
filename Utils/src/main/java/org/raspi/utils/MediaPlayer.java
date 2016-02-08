@@ -51,7 +51,7 @@ public class MediaPlayer {
                 .findAny().get().isHasVideo();
     }
 
-    public boolean isPlaying() {
+    public synchronized boolean isPlaying() {
         return player.getProcess().isAlive();
     }
 
@@ -59,7 +59,7 @@ public class MediaPlayer {
         return player;
     }
 
-    public void play(boolean async) throws IOException {
+    public synchronized void play(boolean async) throws IOException {
         if (toBePlayed != null) {
             Stream.of(Constants.MediaFormat.values())
                     .filter(format -> toBePlayed.getAbsolutePath().toUpperCase().endsWith(format.name()))
@@ -91,9 +91,9 @@ public class MediaPlayer {
         player = new ProcessExecutor(commands);
         if (async) {
             player.startExecutionNonBlocking();
-            return;
+        } else {
+            player.startExecution();
         }
-        player.startExecution();
     }
 
     public static void killAllPlayers() throws IOException {

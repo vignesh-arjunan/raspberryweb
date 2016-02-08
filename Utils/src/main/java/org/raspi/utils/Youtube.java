@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.raspi.execute.ProcessExecutor;
 import org.raspi.execute.ProcessExecutor.Flags;
 
@@ -31,24 +33,20 @@ public class Youtube {
         return ifconfigFlags.getInputMsg();
     }
 
-    public void killAllYoutubeDl() throws IOException {
+    public void killAllYoutubeDl() {
         // killing already running players 
-        List<String> commands = new ArrayList<>();
-        commands.add("/usr/bin/killall");
-        commands.add("-e");
-        commands.add("youtube-dl");
-        ProcessExecutor killer = new ProcessExecutor(commands);
-        killer.startExecution();
-    }
-
-    public void removePartialFiles() throws IOException {
-        System.out.println("Removing part files");
-        List<String> commands = new ArrayList<>();
-        commands.add("/bin/rm");
-        commands.add("-f");
-        commands.add("/home/pi/*.part");
-        ProcessExecutor partFileRemover = new ProcessExecutor(commands);
-        partFileRemover.startExecution();
+        while (processExecutor.getProcess().isAlive()) {
+            List<String> commands = new ArrayList<>();
+            commands.add("/usr/bin/killall");
+            commands.add("-e");
+            commands.add("youtube-dl");
+            ProcessExecutor killer = new ProcessExecutor(commands);
+            try {
+                killer.startExecution();
+            } catch (IOException ex) {
+                Logger.getLogger(Youtube.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     private ProcessExecutor processExecutor;
@@ -59,9 +57,7 @@ public class Youtube {
         this.youtubeURL = youtubeURL;
     }
 
-    public String download() throws IOException {        
-        killAllYoutubeDl();
-        removePartialFiles();
+    public String download() throws IOException {
         List<String> commands = new ArrayList<>();
         commands.add("/usr/local/bin/youtube-dl");
         commands.add(youtubeURL);
@@ -75,12 +71,11 @@ public class Youtube {
     }
 
     public File getFile() throws IOException {
-        System.out.println("file " + file);
+        System.out.println("file <" + file + ">");
         if (file != null) {
             return file;
         }
 
-        killAllYoutubeDl();
         List<String> commands = new ArrayList<>();
         commands.add("/usr/local/bin/youtube-dl");
         commands.add("--get-filename");
@@ -90,7 +85,7 @@ public class Youtube {
         if (ifconfigFlags.getErrMsg().length() > 0) {
             throw new IllegalArgumentException(ifconfigFlags.getErrMsg());
         }
-        return file = new File(ifconfigFlags.getInputMsg());
+        return file = new File(ifconfigFlags.getInputMsg().trim());
     }
 
     public ProcessExecutor getProcessExecutor() {

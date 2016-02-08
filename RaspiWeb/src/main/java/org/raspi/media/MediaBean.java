@@ -343,22 +343,28 @@ public class MediaBean implements Runnable {
     }
 
     public synchronized void downloadFromURI() {
+        FacesContext context = FacesContext.getCurrentInstance();
         if (youtubeURL.trim().isEmpty()) {
-            FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Could not play", "URL not entered"));
             return;
         }
         try {
-            FacesContext context = FacesContext.getCurrentInstance();
             if (isDownloading) {
-                if (context != null) {
-                    context.addMessage(null, new FacesMessage("In Progress", "Download of " + youtube.getFile().getName() + " is in Progress"));
-                }
+                context.addMessage(null, new FacesMessage("In Progress", "Download of " + youtube.getFile().getName() + " is in Progress"));
                 return;
             }
             new URI(youtubeURL.trim()).toString();
             youtube = new Youtube(new URI(youtubeURL.trim()).toString());
-            youtube.getFile();
+            System.out.println("youtube.getFile().exists() " + youtube.getFile().exists());
+            if (youtube.getFile().exists()) {
+                context.addMessage(null, new FacesMessage("Already Downloaded", "Download of " + youtube.getFile().getName() + " is already done"));
+                return;
+            }
+            
+            if (new File(youtube.getFile().getAbsolutePath() + ".part").exists()) {
+                context.addMessage(null, new FacesMessage("Resuming Download", "Resuming download of " + youtube.getFile().getName()));
+            }
+
             waslastIssuedDownloadFailure = false;
             new Thread(() -> {
                 try {
@@ -379,11 +385,9 @@ public class MediaBean implements Runnable {
 
         } catch (IllegalArgumentException | IOException illegalArgumentException) {
             Logger.getLogger(MediaBean.class.getName()).log(Level.SEVERE, null, illegalArgumentException);
-            FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid Input", "Youtube URL is not valid"));
         } catch (URISyntaxException exception) {
             Logger.getLogger(MediaBean.class.getName()).log(Level.SEVERE, null, exception);
-            FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Could not play", "URL not accessible"));
         }
     }

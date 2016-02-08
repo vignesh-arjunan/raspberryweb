@@ -61,7 +61,7 @@ public class ProcessExecutor {
 
         ProcessBuilder pb = new ProcessBuilder(commands);
         System.out.println("commands");
-        commands.forEach(System.out::print);
+        commands.forEach(cmd -> System.out.print(cmd + " "));
         System.out.println();
         process = pb.start();
         flags = new Flags();
