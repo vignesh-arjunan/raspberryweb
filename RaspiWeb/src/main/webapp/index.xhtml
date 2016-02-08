@@ -141,7 +141,7 @@
                                 <p:outputLabel value="Streaming needs fast/uninterrupted internet" />
                                 <h:panelGrid columns="3" cellpadding="5">
                                     <p:commandButton value="Stream the Video" actionListener="#{mediaBean.playFromURI()}" update="messages1,:tabView:accordionPanel1:youtubeForm" />
-                                    <p:commandButton value="Download the Video" actionListener="#{mediaBean.downloadFromURI()}" update="messages1,:tabView:accordionPanel1:youtubeForm" />
+                                    <p:commandButton value="Download the Video" actionListener="#{mediaBean.downloadFromURI()}" disabled="#{mediaBean.isDownloading}" update="messages1,:tabView:accordionPanel1:youtubeForm" />
                                     <p:commandButton value="Clear" actionListener="#{mediaBean.clearYoutubeURL()}" update="youtubeForm" />                                
                                 </h:panelGrid>
                                 <p:commandButton rendered="#{mediaBean.isDownloading}" value="Cancel Download" actionListener="#{mediaBean.cancelDownload()}" update="youtubeForm" />                             
