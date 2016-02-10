@@ -71,10 +71,12 @@ public class UpdateBean {
     @PreDestroy
     void destroy() {
         try {
-            if (downloadSuccessful) { // deploying lastest 
+            if (downloadSuccessful && !DESTINATION.exists()) { // deploying lastest 
+                System.out.println("deploying latest");
                 Files.copy(TEMP.toPath(), DESTINATION.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 CheckNetworkAndRebootOrNotify.reboot();
-            } else if (BACKUP.exists()) { // deploying backup
+            } else if (BACKUP.exists() && !DESTINATION.exists()) { // deploying backup
+                System.out.println("deploying backup");
                 Files.copy(BACKUP.toPath(), DESTINATION.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 CheckNetworkAndRebootOrNotify.reboot();
             } else {
@@ -151,9 +153,10 @@ public class UpdateBean {
                 if (updateManager.isUpdateAvailable() && !updateInProgress) {
                     updateInProgress = true;
                     if (downloadSuccessful = updateManager.downloadLatest()) {
-                        Files.deleteIfExists(BACKUP.toPath());
-                        Files.copy(DESTINATION.toPath(), BACKUP.toPath(), StandardCopyOption.REPLACE_EXISTING); // taking backup
-                        Files.delete(DESTINATION.toPath()); // triggering undeploy after successful download
+                        //Files.deleteIfExists(BACKUP.toPath()); // removing old backup
+                        // taking backup and triggering undeploy after successful download
+                        Files.move(DESTINATION.toPath(), BACKUP.toPath(), StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+                        //Files.delete(DESTINATION.toPath()); // triggering undeploy after successful download
                     }
                 }
             } catch (Throwable ex) {
