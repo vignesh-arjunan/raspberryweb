@@ -65,7 +65,7 @@
                                     <p:commandButton value="Play" update=":tabView:accordionPanel1:mediaForm" action="#{mediaBean.playSelectedFile()}" />
                                     <p:commandButton value="Refresh" update=":tabView:accordionPanel1:mediaForm" action="#{mediaBean.loadMediaFiles()}" />
                                     <p:commandButton value="Remove" update=":tabView:accordionPanel1:mediaForm" action="#{mediaBean.deleteSelectedFile()}" />
-                                    <p:commandButton value="Add to Play List : " update=":tabView:accordionPanel1:mediaForm" action="#{mediaBean.addSelectedFile()}" />    
+                                    <p:commandButton value="Add to Play List : " update=":tabView:accordionPanel1:mediaForm,:tabView:accordionPanel1:playListForm" action="#{mediaBean.addSelectedFile()}" />    
                                     <p:selectOneButton id="playListSelection" value="#{mediaBean.selectedPlayListIndex}"  >
                                         <f:selectItems value="#{playListBean.allIndices}" />            
                                         <p:ajax update=":tabView:accordionPanel1:mediaForm" />
