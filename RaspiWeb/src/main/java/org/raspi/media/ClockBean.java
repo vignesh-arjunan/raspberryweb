@@ -43,7 +43,7 @@ public class ClockBean {
     private MediaBean mediaBean;
     private boolean addMode = true;
     private boolean isVideoPlaying = false;
-    
+
     public boolean isAddMode() {
         return addMode;
     }
