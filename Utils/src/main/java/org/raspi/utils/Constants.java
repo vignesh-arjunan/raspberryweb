@@ -10,7 +10,7 @@ public class Constants {
 
     public enum MediaFormat {
 
-        MP3(false), MP4(true), FLV(true), MOV(true), AVI(true);
+        MP3(false), MP4(true), FLV(true), MOV(true), AVI(true), MKV(true);
         private final boolean hasVideo;
 
         private MediaFormat(boolean hasVideo) {
