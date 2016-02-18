@@ -88,7 +88,7 @@
                     <p:tab id="playListTab" title="Play Lists" style="margin-bottom:20px">
                         <h:form id="playListForm">
                             <p:growl id="messages2" showDetail="true" />                               
-                            <p:fieldset legend="Selected Play List Controls" style="margin-bottom:20px">
+                            <p:fieldset legend="Play List Controls" style="margin-bottom:20px">
                                 <h:panelGrid columns="3" cellpadding="5">
                                     <p:commandButton value="Play Selected Play List" actionListener="#{mediaBean.playAll}" update=":tabView:accordionPanel1:playListForm" />
                                     <p:commandButton value="Clear Selected Play List"  actionListener="#{playListBean.clearPlayList()}" update=":tabView:accordionPanel1:playListForm" />
