@@ -87,24 +87,20 @@
 
                     <p:tab id="playListTab" title="Play Lists" style="margin-bottom:20px">
                         <h:form id="playListForm">
-                            <p:growl id="messages2" showDetail="true" />    
-                            <p:fieldset legend="Play List Controls" style="margin-bottom:20px">
-                                <h:panelGrid columns="6" cellpadding="5">
-                                    <p:commandButton value="Save" actionListener="#{playListBean.savePlayList()}" update=":tabView:accordionPanel1:playListForm" />    
-                                    <p:selectBooleanButton value="#{mediaBean.repeat}" onLabel="Repeat On" offLabel="Repeat Off">
-                                        <p:ajax update=":tabView:accordionPanel1:playListForm" />
-                                    </p:selectBooleanButton>                                                                    
-                                </h:panelGrid>
-                            </p:fieldset>
+                            <p:growl id="messages2" showDetail="true" />                               
                             <p:fieldset legend="Selected Play List Controls" style="margin-bottom:20px">
-                                <h:panelGrid columns="2" cellpadding="5">
+                                <h:panelGrid columns="3" cellpadding="5">
                                     <p:commandButton value="Play Selected Play List" actionListener="#{mediaBean.playAll}" update=":tabView:accordionPanel1:playListForm" />
                                     <p:commandButton value="Clear Selected Play List"  actionListener="#{playListBean.clearPlayList()}" update=":tabView:accordionPanel1:playListForm" />
+                                    <p:selectBooleanButton value="#{mediaBean.repeat}" onLabel="Repeat On" offLabel="Repeat Off">
+                                        <p:ajax update=":tabView:accordionPanel1:playListForm" />
+                                    </p:selectBooleanButton>   
                                     <p:outputLabel value="Selected Play List : " />
                                     <p:selectOneButton id="playListSelection" value="#{playListBean.selectedTabIndex}" >
                                         <f:selectItems value="#{playListBean.allIndices}" />     
                                         <p:ajax update=":tabView:accordionPanel1:playListForm:playListSelection" />
-                                    </p:selectOneButton>                                    
+                                    </p:selectOneButton>            
+                                    <p:commandButton value="Save" actionListener="#{playListBean.savePlayList()}" update=":tabView:accordionPanel1:playListForm" />    
                                 </h:panelGrid>
                             </p:fieldset>
                             <p:accordionPanel multiple="true" id="accordionPanel6" value="#{playListBean.playLists}" var="playListWrapper">
