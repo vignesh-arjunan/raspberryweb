@@ -100,7 +100,7 @@
                                         <f:selectItems value="#{playListBean.allIndices}" />     
                                         <p:ajax update=":tabView:accordionPanel1:playListForm:playListSelection" />
                                     </p:selectOneButton>            
-                                    <p:commandButton value="Save" actionListener="#{playListBean.savePlayList()}" update=":tabView:accordionPanel1:playListForm" />    
+                                    <p:commandButton value="Save All" actionListener="#{playListBean.savePlayList()}" update=":tabView:accordionPanel1:playListForm" />    
                                 </h:panelGrid>
                             </p:fieldset>
                             <p:accordionPanel multiple="true" id="accordionPanel6" value="#{playListBean.playLists}" var="playListWrapper">
