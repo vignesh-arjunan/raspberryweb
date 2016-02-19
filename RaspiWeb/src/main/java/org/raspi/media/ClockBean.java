@@ -110,7 +110,7 @@ public class ClockBean {
     @PostConstruct
     void init() {
         alarmList = preferencesBean.getPreferences().getAlarmList();
-        HDMIControl.setHDMIActive(false);
+//        HDMIControl.setHDMIActive(false);
     }
 
     @PreDestroy
@@ -140,21 +140,21 @@ public class ClockBean {
         });
     }
 
-    @Schedule(second = "*", minute = "*", hour = "*", info = "HDMI Checker", persistent = false)
-    public void secondTimeout() {
-        // System.out.println("in second timeout");
-
-        if (MediaPlayer.isPlayingVideo() && !isVideoPlaying) {
-            isVideoPlaying = true;
-            HDMIControl.setHDMIActive(isVideoPlaying);
-        } else if (!MediaPlayer.isPlayingVideo() && isVideoPlaying) {
-            isVideoPlaying = false;
-            HDMIControl.setHDMIActive(isVideoPlaying);
-        } else {
-            // do nothing
-        }
-
-    }
+//    @Schedule(second = "*", minute = "*", hour = "*", info = "HDMI Checker", persistent = false)
+//    public void secondTimeout() {
+//        // System.out.println("in second timeout");
+//
+//        if (MediaPlayer.isPlayingVideo() && !isVideoPlaying) {
+//            isVideoPlaying = true;
+//            HDMIControl.setHDMIActive(isVideoPlaying);
+//        } else if (!MediaPlayer.isPlayingVideo() && isVideoPlaying) {
+//            isVideoPlaying = false;
+//            HDMIControl.setHDMIActive(isVideoPlaying);
+//        } else {
+//            // do nothing
+//        }
+//
+//    }
 
     private boolean isAlarmDay(AlarmEntry alarmEntry) {
         LocalDate localDate = LocalDate.now();
@@ -242,6 +242,7 @@ public class ClockBean {
 //    public void clearAlarm() {
 //        setAlarmEntry(new AlarmEntry());
 //    }
+    
     public void saveAlarmList() throws IOException {
         preferencesBean.getPreferences().setAlarmList(alarmList);
         preferencesBean.savePreferences();
