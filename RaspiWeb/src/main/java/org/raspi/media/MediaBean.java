@@ -49,7 +49,6 @@ public class MediaBean implements Runnable {
     private boolean stopPlayerThread;
     private boolean repeat;
     private File selectedFile;
-    private String currentlyPlaying;
     @Inject
     private PlayListBean playListBean;
     @Inject
@@ -123,6 +122,10 @@ public class MediaBean implements Runnable {
         return mediaPlayer;
     }
 
+    public void setMediaPlayer(MediaPlayer mediaPlayer) {
+        this.mediaPlayer = mediaPlayer;
+    }
+
     public String getYoutubeURL() {
         return youtubeURL;
     }
@@ -185,17 +188,6 @@ public class MediaBean implements Runnable {
         System.out.println("selectedFile " + selectedFile);
     }
 
-    public String getCurrentlyPlaying() {
-        if (currentlyPlaying == null) {
-            return "";
-        }
-        return "Playing " + currentlyPlaying;
-    }
-
-    public void setCurrentlyPlaying(String currentlyPlaying) {
-        this.currentlyPlaying = currentlyPlaying;
-    }
-
     public int getSelectedPlayListIndex() {
         return selectedPlayListIndex;
     }
@@ -252,7 +244,6 @@ public class MediaBean implements Runnable {
             return;
         }
         stop();
-        currentlyPlaying = selectedFile.getName();
         (mediaPlayer = new MediaPlayer(selectedFile)).play(true);
     }
 
@@ -326,7 +317,7 @@ public class MediaBean implements Runnable {
             stop();
             new Thread(() -> {
                 try {
-                    (mediaPlayer = new MediaPlayer(videoURL)).play(false);
+                    (mediaPlayer = new MediaPlayer(videoURL)).play(true);
                 } catch (IOException ex) {
                     Logger.getLogger(MediaBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -360,7 +351,7 @@ public class MediaBean implements Runnable {
                 context.addMessage(null, new FacesMessage("Already Downloaded", "Download of " + youtube.getFile().getName() + " is already done"));
                 return;
             }
-            
+
             if (new File(youtube.getFile().getAbsolutePath() + ".part").exists()) {
                 context.addMessage(null, new FacesMessage("Resuming Download", "Resuming download of " + youtube.getFile().getName()));
             }
@@ -466,10 +457,14 @@ public class MediaBean implements Runnable {
         System.out.println("Starting Player Thread");
         while (!stopPlayerThread) {
             try {
+                // wait until currently playing media is done
+                while (!stopPlayerThread && mediaPlayer != null && mediaPlayer.isPlaying()) {
+                    Thread.sleep(1000); // check after a second
+                }
+
                 File file = playListQueue.take();
                 if (file.exists()) {
-                    currentlyPlaying = file.getName();
-                    (mediaPlayer = new MediaPlayer(file)).play(false);
+                    (mediaPlayer = new MediaPlayer(file)).play(true);
                 }
             } catch (InterruptedException ex) {
                 Logger.getLogger(MediaBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -477,8 +472,6 @@ public class MediaBean implements Runnable {
             } catch (IOException ex) {
                 Logger.getLogger(MediaBean.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            currentlyPlaying = null;
 
             if (repeat && playListQueue.isEmpty()) {
                 playListQueue.addAll(playListBean.getPlayLists().get(playListBean.getSelectedTabIndex() - 1).getPlayList()); // is this the desired behaviour

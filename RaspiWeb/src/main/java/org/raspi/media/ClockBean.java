@@ -130,10 +130,11 @@ public class ClockBean {
         }).forEach((AlarmEntry alarmEntryItem) -> {
             try {
                 if (!alarmEntryItem.isPlayList()) {
-                    (new MediaPlayer(new File(PARENT_MEDIA_DIR + File.separator + alarmEntryItem.getChosenMedia()))).play(true);
-                    return;
+                    mediaBean.setMediaPlayer(new MediaPlayer(new File(PARENT_MEDIA_DIR + File.separator + alarmEntryItem.getChosenMedia())));
+                    mediaBean.getMediaPlayer().play(true);
+                } else {
+                    mediaBean.playAll(alarmEntryItem.getSelectedPlayListIndex() - 1);
                 }
-                mediaBean.playAll(alarmEntryItem.getSelectedPlayListIndex() - 1);
             } catch (IOException ex) {
                 Logger.getLogger(ClockBean.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -155,7 +156,6 @@ public class ClockBean {
 //        }
 //
 //    }
-
     private boolean isAlarmDay(AlarmEntry alarmEntry) {
         LocalDate localDate = LocalDate.now();
         return Arrays.stream(alarmEntry.getSelectedDays()).anyMatch(dayOfWeek -> dayOfWeek.equals(localDate.getDayOfWeek().name()));
@@ -242,7 +242,6 @@ public class ClockBean {
 //    public void clearAlarm() {
 //        setAlarmEntry(new AlarmEntry());
 //    }
-    
     public void saveAlarmList() throws IOException {
         preferencesBean.getPreferences().setAlarmList(alarmList);
         preferencesBean.savePreferences();
