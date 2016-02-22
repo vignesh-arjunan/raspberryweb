@@ -41,4 +41,5 @@ public class Constants {
     public static final File TEMP = new File("/tmp/RaspiWeb.war");
     public static final File BACKUP = new File("/home/pi/RaspiWeb.war.backup");
     public static final int NO_OF_PLAYLISTS = 5;
+    public static final int MAX_SIZE_MOTION_RECORDINGS = 50;
 }
