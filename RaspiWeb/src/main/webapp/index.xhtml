@@ -42,7 +42,7 @@
                     <p:fieldset legend="Media Controls" style="margin-bottom:20px">
                         <h:panelGrid columns="6" cellpadding="2">
                             <p:commandButton value="Pause / Resume" update=":tabView:mediaControlsForm" action="#{mediaBean.pauseOrResume()}" />    
-                            <p:commandButton value="Stop" update=":tabView:mediaControlsForm" action="#{mediaBean.stop()}" />
+                            <p:commandButton value="Stop" update=":tabView:mediaControlsForm, :tabView:accordionPanel1:playListForm" action="#{mediaBean.stop()}" />
                             <p:commandButton value="Up Volume" update=":tabView:mediaControlsForm" action="#{mediaBean.increaseVolume()}" />  
                             <p:commandButton value="Down Volume" update=":tabView:mediaControlsForm" action="#{mediaBean.decreaseVolume()}" />  
                             <p:commandButton value="&lt;&lt;" title="seek -600 secs" rendered="false" update=":tabView:mediaControlsForm" action="#{mediaBean.seekMinus600()}" /> 
