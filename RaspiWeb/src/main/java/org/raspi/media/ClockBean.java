@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.raspi.timer.PreferencesBean;
 import static org.raspi.utils.Constants.PARENT_MEDIA_DIR;
-import org.raspi.utils.HDMIControl;
 import org.raspi.utils.MediaPlayer;
 
 /**
@@ -42,7 +41,6 @@ public class ClockBean {
     @Inject
     private MediaBean mediaBean;
     private boolean addMode = true;
-    private boolean isVideoPlaying = false;
 
     public boolean isAddMode() {
         return addMode;
@@ -198,9 +196,10 @@ public class ClockBean {
             return;
         }
 
+        alarmEntry.setName(alarmEntry.getName().trim());
         alarmEntry.setAlarmTime(LocalTime.of(alarmEntry.getHours(), alarmEntry.getMins()));
 
-        if ((isAddMode()) && (checkAlarmConflict(alarmList, alarmEntry) || checkUniqueName())) {
+        if ((isAddMode()) && (checkAlarmConflict(alarmList, alarmEntry) || checkDuplicateName())) {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Alarm time/name conflicting !!!"));
             return;
@@ -226,7 +225,7 @@ public class ClockBean {
         setAlarmEntry(new AlarmEntry());
     }
 
-    private boolean checkUniqueName() {
+    private boolean checkDuplicateName() {
         return alarmList.stream().anyMatch((AlarmEntry entry) -> entry.getName().equals(alarmEntry.getName()));
     }
 
@@ -239,9 +238,6 @@ public class ClockBean {
                 .findAny().isPresent();
     }
 
-//    public void clearAlarm() {
-//        setAlarmEntry(new AlarmEntry());
-//    }
     public void saveAlarmList() throws IOException {
         preferencesBean.getPreferences().setAlarmList(alarmList);
         preferencesBean.savePreferences();
