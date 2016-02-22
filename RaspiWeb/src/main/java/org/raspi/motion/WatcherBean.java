@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
@@ -28,6 +30,7 @@ import org.raspi.media.MediaBean;
 import org.raspi.timer.PreferencesBean;
 import static org.raspi.utils.Constants.MOTION_DIR;
 import org.raspi.utils.FileValidator;
+import static org.raspi.utils.Constants.MAX_SIZE_MOTION_RECORDINGS;
 
 /**
  *
@@ -46,13 +49,12 @@ public class WatcherBean {
     private PreferencesBean preferencesBean;
     private boolean notifyEventStart;
     private boolean notifyAttachment;
-    private final List<String> errors = new ArrayList<>();
+    private final List<String> errors = Collections.synchronizedList(new ArrayList<>());
     private final File motionDir = MOTION_DIR;
     private List<File> recordingFiles;
     private File selectedFile;
     @Inject
     private MediaBean mediaBean;
-    private final int max_size = 50;
     private final FileFilter fileFilter = file -> file.getName().contains(".") && file.length() > 0 && file.exists();
     private final Predicate<File> filePredicateToRemoveBadFiles = file -> file.length() == 0 || !file.exists();
 
@@ -91,36 +93,39 @@ public class WatcherBean {
             watchDir = new WatchDir(dir.toPath(), false);
             watchDir.startNotificationThread();
             listenerThread = new Thread(() -> {
-                watchDir.subject((subject) -> {
-
-                    loadRecordingFiles();
-
-                    if (preferencesBean.getPreferences().isEmailPassswordVerified() && notifyEventStart) {
-                        String email = preferencesBean.getPreferences().getEmail();
-                        String password = preferencesBean.getPreferences().getPassword();
-                        SendEmail.MailProvider mailProvider = preferencesBean.getPreferences().getMailProvider();
-                        try {
-                            SendEmail.send(email, password, email, email, subject, "attachment coming shortly", null, mailProvider);
-                        } catch (MessagingException | IOException ex) {
-                            Logger.getLogger(WatcherBean.class.getName()).log(Level.SEVERE, null, ex);
-                            errors.add("Could not send alert for " + subject);
-                        }
-                    }
-                },
+                watchDir.subject(
+                        (subject) -> {
+                            if (preferencesBean.getPreferences().isEmailPassswordVerified() && notifyEventStart) {
+                                String email = preferencesBean.getPreferences().getEmail();
+                                String password = preferencesBean.getPreferences().getPassword();
+                                SendEmail.MailProvider mailProvider = preferencesBean.getPreferences().getMailProvider();
+                                try {
+                                    SendEmail.send(email, password, email, email, subject, "attachment coming shortly", null, mailProvider);
+                                } catch (MessagingException | IOException ex) {
+                                    Logger.getLogger(WatcherBean.class.getName()).log(Level.SEVERE, null, ex);
+                                    handleErrors("Could not send alert for " + subject);
+                                }
+                            }
+                        },
                         (subject, file) -> {
-                            String email = preferencesBean.getPreferences().getEmail();
-                            String password = preferencesBean.getPreferences().getPassword();
-                            SendEmail.MailProvider mailProvider = preferencesBean.getPreferences().getMailProvider();
+
+                            loadRecordingFiles();
+
                             if (preferencesBean.getPreferences().isEmailPassswordVerified() && notifyAttachment) {
+                                String email = preferencesBean.getPreferences().getEmail();
+                                String password = preferencesBean.getPreferences().getPassword();
+                                SendEmail.MailProvider mailProvider = preferencesBean.getPreferences().getMailProvider();
                                 try {
                                     SendEmail.send(email, password, email, email, subject, "PFA", file, mailProvider);
                                     System.out.println("deleting " + file + ", status " + file.delete());
                                 } catch (MessagingException | IOException ex) {
                                     Logger.getLogger(WatcherBean.class.getName()).log(Level.SEVERE, null, ex);
-                                    errors.add("Could not send attachement for " + file);
+                                    handleErrors("Could not send attachement for " + file);
                                 }
                             }
-                        }, () -> {
+                        },
+                        () -> {
+                            // doing nothing
                         });
             });
             listenerThread.start();
@@ -129,6 +134,13 @@ public class WatcherBean {
         }
 
         loadRecordingFiles();
+    }
+
+    private void handleErrors(String msg) {
+        while (errors.size() >= MAX_SIZE_MOTION_RECORDINGS) {
+            errors.remove(0);
+        }
+        errors.add(msg);
     }
 
     public void pushNotification(Runnable runnable) {
@@ -153,14 +165,14 @@ public class WatcherBean {
     public void loadRecordingFiles() {
         Comparator<File> fileComparator = (f1, f2) -> Long.compareUnsigned(f1.lastModified(), f2.lastModified());
         Stream<File> fileStream = Stream.of(motionDir.listFiles(fileFilter)).sorted(fileComparator.reversed());
-        recordingFiles = fileStream.limit(max_size).collect(toList());
+        recordingFiles = fileStream.limit(MAX_SIZE_MOTION_RECORDINGS).collect(toList());
         recordingFiles.removeIf(filePredicateToRemoveBadFiles);
         fileStream = Stream.of(motionDir.listFiles(fileFilter)).sorted(fileComparator.reversed());
         Object[] allFiles = fileStream.toArray();
         fileStream = Stream.of(motionDir.listFiles(fileFilter)).sorted(fileComparator.reversed());
         IntStream.range(0, (int) fileStream.count())
                 .forEach((index) -> {
-                    if ((index + 1) > max_size) {
+                    if ((index + 1) > MAX_SIZE_MOTION_RECORDINGS) {
                         ((File) allFiles[index]).delete();
                     }
                 });
