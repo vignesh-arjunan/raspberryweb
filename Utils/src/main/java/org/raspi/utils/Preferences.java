@@ -16,8 +16,8 @@ public class Preferences implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-//    private List<File> playList = new ArrayList<>();
     private List<PlayListWrapper> playLists = new ArrayList<>(NO_OF_PLAYLISTS);
+    private List<InternetRadioStation> stations = new ArrayList<>();
     private List<AlarmEntry> alarmList = new ArrayList<>();
     private String notificationWhen = "-1";
     private String notificationMsg = "I am up !!";
@@ -45,6 +45,14 @@ public class Preferences implements Serializable {
     public void setPlayLists(List<PlayListWrapper> playLists) {
         this.playLists = playLists;
     }
+
+    public List<InternetRadioStation> getStations() {
+        return stations;
+    }
+
+    public void setStations(List<InternetRadioStation> stations) {
+        this.stations = stations;
+    }       
 
     public boolean isUpdateSoftwareAutomatically() {
         return updateSoftwareAutomatically;
