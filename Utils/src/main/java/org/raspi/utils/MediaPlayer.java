@@ -4,7 +4,6 @@ import org.raspi.execute.ProcessExecutor;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,11 +20,22 @@ public class MediaPlayer {
     private ProcessExecutor player;
     private static MediaPlayer mediaPlayer;
 
-    public static boolean isPlayingVideo() {
+//    public static boolean isPlayingVideo() {
+//        if (mediaPlayer == null) {
+//            return false;
+//        }
+//        synchronized (mediaPlayer) {
+//            return mediaPlayer.getPlayer().getProcess().isAlive() && mediaPlayer.isVideo();
+//        }
+//    }
+
+    public static boolean isPlaying() {
         if (mediaPlayer == null) {
             return false;
         }
-        return mediaPlayer.getPlayer().getProcess().isAlive() && mediaPlayer.isVideo();
+        synchronized (mediaPlayer) {
+            return mediaPlayer.getPlayer().getProcess().isAlive();
+        }
     }
 
     public MediaPlayer(File file) {
@@ -49,10 +59,6 @@ public class MediaPlayer {
         return Stream.of(Constants.MediaFormat.values())
                 .filter(format -> toBePlayed.getAbsolutePath().toUpperCase().endsWith(format.name()))
                 .findAny().get().isHasVideo();
-    }
-
-    public synchronized boolean isPlaying() {
-        return player.getProcess().isAlive();
     }
 
     public ProcessExecutor getPlayer() {
