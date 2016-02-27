@@ -45,17 +45,17 @@ public class InternetRadioBean {
         this.addMode = addMode;
     }
 
-    public InternetRadioStation getSelectedAlarmEntry() {
+    public InternetRadioStation getSelectedAInternetRadioStationEntry() {
         return selectedInternetRadioStationEntry;
     }
 
-    public void setSelectedAlarmEntry(InternetRadioStation selectedAlarmEntry) {
-        this.selectedInternetRadioStationEntry = selectedAlarmEntry;
+    public void setSelectedInternetRadioStationEntry(InternetRadioStation selectedStationEntry) {
+        this.selectedInternetRadioStationEntry = selectedStationEntry;
         internetRadioStationEntry = new InternetRadioStation();
         setAddMode(false);
-        if (selectedAlarmEntry != null) {
-            internetRadioStationEntry.setStation(selectedAlarmEntry.getStation());
-            internetRadioStationEntry.setUri(selectedAlarmEntry.getUri());
+        if (selectedStationEntry != null) {
+            internetRadioStationEntry.setStation(selectedStationEntry.getStation());
+            internetRadioStationEntry.setUri(selectedStationEntry.getUri());
         }
     }
 
@@ -69,7 +69,7 @@ public class InternetRadioBean {
 
     public void clearSelection() {
         if (selectedInternetRadioStationEntry != null) {
-            setSelectedAlarmEntry(null);
+            setSelectedInternetRadioStationEntry(null);
             internetRadioStationEntry = new InternetRadioStation();
             setAddMode(true);
         } else {
@@ -104,7 +104,7 @@ public class InternetRadioBean {
 
     }
 
-    public void clearAllAlarms() {
+    public void clearAllStations() {
         internetRadioStationList.clear();
     }
 
@@ -143,17 +143,17 @@ public class InternetRadioBean {
         internetRadioStationEntry.setStation(internetRadioStationEntry.getStation().trim());
         internetRadioStationEntry.setUri(internetRadioStationEntry.getUri().trim());
 
-        if (isAddMode() && checkDuplicate()) {
+        if (isAddMode() && checkDuplicateStation()) {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Station/Web Address conflicting !!!"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Web Address conflicting !!!"));
             return;
         }
 
         List<InternetRadioStation> internetRadioStationListToCheck = new ArrayList<>(internetRadioStationList);
         internetRadioStationListToCheck.remove(internetRadioStationEntry);
-        if ((!isAddMode()) && (checkAlarmConflict(internetRadioStationListToCheck, internetRadioStationEntry))) {
+        if ((!isAddMode()) && (checkStationConflict(internetRadioStationListToCheck, internetRadioStationEntry))) {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Alarm time conflicting !!!"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Station time conflicting !!!"));
             return;
         }
 
@@ -169,33 +169,34 @@ public class InternetRadioBean {
         setInternetRadioStationEntry(new InternetRadioStation());
     }
 
-    private boolean checkDuplicate() {
-        return internetRadioStationList.stream().anyMatch(
-                (InternetRadioStation entry) -> entry.getStation().equals(internetRadioStationEntry.getStation()) && entry.getUri().equals(internetRadioStationEntry.getUri())
-        );
+    private boolean checkDuplicateStation() {
+        return internetRadioStationList.stream()
+                .anyMatch(
+                        (InternetRadioStation entry) -> (entry.getUri().equals(internetRadioStationEntry.getUri()) || entry.getStation().equals(internetRadioStationEntry.getStation()))
+                );
     }
 
-    private static boolean checkAlarmConflict(List<InternetRadioStation> alarmListToCheck, InternetRadioStation alarmEntryToCheck) {
-        return alarmListToCheck.stream()
+    private static boolean checkStationConflict(List<InternetRadioStation> internetRadioStationListToCheck, InternetRadioStation internetRadioStationEntryToCheck) {
+        return internetRadioStationListToCheck.stream()
                 .filter((InternetRadioStation entry)
-                        -> alarmEntryToCheck.getStation().equals(entry.getStation()) && alarmEntryToCheck.getUri().equals(entry.getUri()))
+                        -> internetRadioStationEntryToCheck.getStation().equals(entry.getStation()) || internetRadioStationEntryToCheck.getUri().equals(entry.getUri()))
                 .findAny().isPresent();
     }
 
-    public void saveAlarmList() throws IOException {
+    public void saveStationList() throws IOException {
         preferencesBean.getPreferences().setStations(internetRadioStationList);
         preferencesBean.savePreferences();
         FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage("Successful", "Alarm List Saved"));
+        context.addMessage(null, new FacesMessage("Successful", "Station List Saved"));
     }
 
-    public void deleteAlarm() {
+    public void deleteStation() {
         if (selectedInternetRadioStationEntry != null) {
             internetRadioStationList.remove(selectedInternetRadioStationEntry);
             internetRadioStationEntry = new InternetRadioStation();
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please select", "Please select an Alarm"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please select", "Please select an Station"));
         }
     }
 

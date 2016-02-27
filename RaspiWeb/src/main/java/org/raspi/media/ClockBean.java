@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.raspi.timer.PreferencesBean;
 import static org.raspi.utils.Constants.PARENT_MEDIA_DIR;
+import org.raspi.utils.HDMIControl;
 import org.raspi.utils.MediaPlayer;
 
 /**
@@ -41,6 +42,7 @@ public class ClockBean {
     @Inject
     private MediaBean mediaBean;
     private boolean addMode = true;
+    private boolean isPlaying;
 
     public boolean isAddMode() {
         return addMode;
@@ -108,7 +110,7 @@ public class ClockBean {
     @PostConstruct
     void init() {
         alarmList = preferencesBean.getPreferences().getAlarmList();
-//        HDMIControl.setHDMIActive(false);
+        HDMIControl.setHDMIActive(false);
     }
 
     @PreDestroy
@@ -139,21 +141,21 @@ public class ClockBean {
         });
     }
 
-//    @Schedule(second = "*", minute = "*", hour = "*", info = "HDMI Checker", persistent = false)
-//    public void secondTimeout() {
-//        // System.out.println("in second timeout");
-//
-//        if (MediaPlayer.isPlayingVideo() && !isVideoPlaying) {
-//            isVideoPlaying = true;
-//            HDMIControl.setHDMIActive(isVideoPlaying);
-//        } else if (!MediaPlayer.isPlayingVideo() && isVideoPlaying) {
-//            isVideoPlaying = false;
-//            HDMIControl.setHDMIActive(isVideoPlaying);
-//        } else {
-//            // do nothing
-//        }
-//
-//    }
+    @Schedule(second = "*", minute = "*", hour = "*", info = "HDMI Checker", persistent = false)
+    public void secondTimeout() {
+        // System.out.println("in second timeout");
+
+        if (MediaPlayer.isPlaying() && !isPlaying) {
+            isPlaying = true;
+            HDMIControl.setHDMIActive(isPlaying);
+        } else if (!MediaPlayer.isPlaying() && isPlaying) {
+            isPlaying = false;
+            HDMIControl.setHDMIActive(isPlaying);
+        } else {
+            // do nothing
+        }
+    }
+
     private boolean isAlarmDay(AlarmEntry alarmEntry) {
         LocalDate localDate = LocalDate.now();
         return Arrays.stream(alarmEntry.getSelectedDays()).anyMatch(dayOfWeek -> dayOfWeek.equals(localDate.getDayOfWeek().name()));
