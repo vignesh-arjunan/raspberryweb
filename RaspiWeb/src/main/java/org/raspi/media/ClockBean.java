@@ -163,6 +163,9 @@ public class ClockBean {
 
     public void clearAllAlarms() {
         alarmList.clear();
+        alarmEntry = new AlarmEntry();
+        setSelectedAlarmEntry(null);
+        setAddMode(true);
     }
 
     public String getButtonLabel() {
@@ -251,6 +254,8 @@ public class ClockBean {
         if (selectedAlarmEntry != null) {
             alarmList.remove(selectedAlarmEntry);
             alarmEntry = new AlarmEntry();
+            setSelectedAlarmEntry(null);
+            setAddMode(true);
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please select", "Please select an Alarm"));
@@ -258,19 +263,19 @@ public class ClockBean {
     }
 
     public void activateAlarm() {
-        activateDeactvteAlarms((AlarmEntry alarmEntry1) -> {
-            if (alarmEntry.isActive()) {
+        activateDeactivateAlarms((AlarmEntry alarmEntry1) -> {
+            if (selectedAlarmEntry.isActive()) {
                 FacesContext context = FacesContext.getCurrentInstance();
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Already Active", "Alarm is already Active"));
             } else {
-                alarmEntry.setActive(true);
+                selectedAlarmEntry.setActive(true);
             }
         });
 
     }
 
     public void deActivateAlarm() {
-        activateDeactvteAlarms((AlarmEntry alarmEntry1) -> {
+        activateDeactivateAlarms((AlarmEntry alarmEntry1) -> {
             if (!selectedAlarmEntry.isActive()) {
                 FacesContext context = FacesContext.getCurrentInstance();
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Already InActive", "Alarm is already InActive"));
@@ -281,7 +286,7 @@ public class ClockBean {
 
     }
 
-    private void activateDeactvteAlarms(Consumer<AlarmEntry> consumer) {
+    private void activateDeactivateAlarms(Consumer<AlarmEntry> consumer) {
         if (selectedAlarmEntry != null) {
             consumer.accept(selectedAlarmEntry);
         } else {
