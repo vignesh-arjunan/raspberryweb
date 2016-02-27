@@ -150,6 +150,44 @@
                         </h:form>
                     </p:tab>
 
+                    <p:tab title="Internet Radio" style="margin-bottom:20px">
+                        <h:form id="stationForm">
+                            <p:fieldset legend="Alarm Time Settings" style="margin-bottom:20px">
+                                <h:panelGrid columns="2" cellpadding="5">
+                                    <p:outputLabel for="name" value="Station :" />
+                                    <p:inputText id="name" value="#{internetRadioBean.internetRadioStationEntry.station}" disabled="#{!internetRadioBean.addMode}" />                                  
+                                    <p:outputLabel for="url" value="URL :" />
+                                    <p:inputTextarea id="url" value="#{internetRadioBean.internetRadioStationEntry.uri}" cols="40" rows="1" />                                  
+                                </h:panelGrid>
+                            </p:fieldset>
+
+                            <p:commandButton value="#{internetRadioBean.buttonLabel}" actionListener="#{internetRadioBean.addEditStation()}" update="messages1,:tabView:accordionPanel1:stationForm,:tabView:accordionPanel1:stationListForm" />
+
+                            <p:growl id="messages1" showDetail="true" />
+                        </h:form>
+                        <h:form id="stationListForm">
+                            <br/>
+                            <p:dataTable id="stationTable" var="internetStation" value="#{internetRadioBean.internetRadioStationList}" selectionMode="single" selection="#{internetRadioBean.selectedInternetRadioStationEntry}" rowKey="#{internetStation.station}">
+                                <p:ajax event="rowSelect" listener="#{internetRadioBean.handleRowSelect()}" update=":tabView:accordionPanel1:stationForm" />
+                                <p:ajax event="rowUnselect" listener="#{internetRadioBean.handleRowUnselect()}" update=":tabView:accordionPanel1:stationForm" />
+                                <p:column headerText="Station" style="width:25px;text-align: center" sortBy="#{internetStation.station}">
+                                    <h:outputText value="#{internetStation.station}" />
+                                </p:column>
+                                <p:column headerText="URL" style="width:25px;text-align: center" sortBy="#{internetStation.uri}">
+                                    <h:outputText value="#{internetStation.uri}" />
+                                </p:column>                               
+                                <f:facet name="footer">
+                                    <p:commandButton value="Clear All" actionListener="#{internetRadioBean.clearAllStations()}" update=":tabView:accordionPanel1:stationListForm,:tabView:accordionPanel1:stationForm" />
+                                    <p:commandButton value="Save Stations" actionListener="#{internetRadioBean.saveStationList()}" update=":tabView:accordionPanel1:stationListForm:messages1" />
+                                    <p:commandButton value="Remove Station" actionListener="#{internetRadioBean.deleteStation()}" update=":tabView:accordionPanel1:stationListForm,:tabView:accordionPanel1:stationForm" />
+                                    <p:commandButton value="Clear Selection" actionListener="#{internetRadioBean.clearSelection()}" update=":tabView:accordionPanel1:stationListForm,:tabView:accordionPanel1:stationForm" />
+                                </f:facet>
+                            </p:dataTable>
+                            <br/>
+                            <p:growl id="messages1" showDetail="true" />                            
+                        </h:form>
+                    </p:tab>
+
                 </p:tabView>
             </p:tab>
 
@@ -252,7 +290,7 @@
                                     <h:outputText value="#{alarm.activeString}" />
                                 </p:column>
                                 <f:facet name="footer">
-                                    <p:commandButton value="Clear All" actionListener="#{clockBean.clearAllAlarms()}" update=":tabView:accordionPanel2:alarmListForm" />
+                                    <p:commandButton value="Clear All" actionListener="#{clockBean.clearAllAlarms()}" update=":tabView:accordionPanel2:alarmListForm,:tabView:accordionPanel2:alarmForm" />
                                     <p:commandButton value="Save Alarms" actionListener="#{clockBean.saveAlarmList()}" update=":tabView:accordionPanel2:alarmListForm:messages1" />
                                     <p:commandButton value="Remove Alarm" actionListener="#{clockBean.deleteAlarm()}" update=":tabView:accordionPanel2:alarmListForm,:tabView:accordionPanel2:alarmForm" />
                                     <p:commandButton value="Activate Alarm" actionListener="#{clockBean.activateAlarm()}" update=":tabView:accordionPanel2:alarmListForm,:tabView:accordionPanel2:alarmForm" />

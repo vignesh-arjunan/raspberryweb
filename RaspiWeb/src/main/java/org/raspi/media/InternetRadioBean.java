@@ -35,7 +35,6 @@ public class InternetRadioBean {
     @Inject
     private MediaBean mediaBean;
     private boolean addMode = true;
-    private boolean isVideoPlaying = false;
 
     public boolean isAddMode() {
         return addMode;
@@ -45,7 +44,7 @@ public class InternetRadioBean {
         this.addMode = addMode;
     }
 
-    public InternetRadioStation getSelectedAInternetRadioStationEntry() {
+    public InternetRadioStation getSelectedInternetRadioStationEntry() {
         return selectedInternetRadioStationEntry;
     }
 
@@ -106,6 +105,9 @@ public class InternetRadioBean {
 
     public void clearAllStations() {
         internetRadioStationList.clear();
+        internetRadioStationEntry = new InternetRadioStation();
+        setSelectedInternetRadioStationEntry(null);
+        setAddMode(true);
     }
 
     public String getButtonLabel() {
@@ -132,7 +134,7 @@ public class InternetRadioBean {
         }
 
         try {
-            new URI(internetRadioStationEntry.getUri().trim()).toString();
+            new URI(internetRadioStationEntry.getUri().trim());
         } catch (URISyntaxException ex) {
             Logger.getLogger(InternetRadioBean.class.getName()).log(Level.SEVERE, null, ex);
             FacesContext context = FacesContext.getCurrentInstance();
@@ -145,7 +147,7 @@ public class InternetRadioBean {
 
         if (isAddMode() && checkDuplicateStation()) {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Web Address conflicting !!!"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Station / Web Address conflicting !!!"));
             return;
         }
 
@@ -194,6 +196,8 @@ public class InternetRadioBean {
         if (selectedInternetRadioStationEntry != null) {
             internetRadioStationList.remove(selectedInternetRadioStationEntry);
             internetRadioStationEntry = new InternetRadioStation();
+            setSelectedInternetRadioStationEntry(null);
+            setAddMode(true);
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please select", "Please select an Station"));
