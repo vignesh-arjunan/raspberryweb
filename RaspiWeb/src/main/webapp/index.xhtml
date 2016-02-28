@@ -152,7 +152,7 @@
 
                     <p:tab title="Internet Radio" style="margin-bottom:20px">
                         <h:form id="stationForm">
-                            <p:fieldset legend="Alarm Time Settings" style="margin-bottom:20px">
+                            <p:fieldset legend="Station Settings" style="margin-bottom:20px">
                                 <h:panelGrid columns="2" cellpadding="5">
                                     <p:outputLabel for="name" value="Station :" />
                                     <p:inputText id="name" value="#{internetRadioBean.internetRadioStationEntry.station}" disabled="#{!internetRadioBean.addMode}" />                                  
@@ -179,6 +179,7 @@
                                 <f:facet name="footer">
                                     <p:commandButton value="Clear All" actionListener="#{internetRadioBean.clearAllStations()}" update=":tabView:accordionPanel1:stationListForm,:tabView:accordionPanel1:stationForm" />
                                     <p:commandButton value="Save Stations" actionListener="#{internetRadioBean.saveStationList()}" update=":tabView:accordionPanel1:stationListForm:messages1" />
+                                    <p:commandButton value="Play Station" actionListener="#{internetRadioBean.playStation()}" update=":tabView:accordionPanel1:stationListForm,:tabView:accordionPanel1:stationForm" />
                                     <p:commandButton value="Remove Station" actionListener="#{internetRadioBean.deleteStation()}" update=":tabView:accordionPanel1:stationListForm,:tabView:accordionPanel1:stationForm" />
                                     <p:commandButton value="Clear Selection" actionListener="#{internetRadioBean.clearSelection()}" update=":tabView:accordionPanel1:stationListForm,:tabView:accordionPanel1:stationForm" />
                                 </f:facet>

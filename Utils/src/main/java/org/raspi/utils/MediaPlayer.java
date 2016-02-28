@@ -16,18 +16,9 @@ import java.util.stream.Stream;
 public class MediaPlayer {
 
     private File toBePlayed;
-    private String videoURI;
+    private String URL;
     private ProcessExecutor player;
     private static MediaPlayer mediaPlayer;
-
-//    public static boolean isPlayingVideo() {
-//        if (mediaPlayer == null) {
-//            return false;
-//        }
-//        synchronized (mediaPlayer) {
-//            return mediaPlayer.getPlayer().getProcess().isAlive() && mediaPlayer.isVideo();
-//        }
-//    }
 
     public static boolean isPlaying() {
         if (mediaPlayer == null) {
@@ -43,22 +34,13 @@ public class MediaPlayer {
         toBePlayed = file;
     }
 
-    public MediaPlayer(String videoURL) {
-        Objects.requireNonNull(videoURL, "videoURL cannot be null");
-        this.videoURI = videoURL;
+    public MediaPlayer(String URL) {
+        Objects.requireNonNull(URL, "URL cannot be null");
+        this.URL = URL;
     }
 
     public File getToBePlayed() {
         return toBePlayed;
-    }
-
-    public boolean isVideo() {
-        if (videoURI != null) {
-            return true;
-        }
-        return Stream.of(Constants.MediaFormat.values())
-                .filter(format -> toBePlayed.getAbsolutePath().toUpperCase().endsWith(format.name()))
-                .findAny().get().isHasVideo();
     }
 
     public ProcessExecutor getPlayer() {
@@ -83,15 +65,12 @@ public class MediaPlayer {
         if (toBePlayed != null) {
             commands.add(toBePlayed.getAbsolutePath());
         } else {
-            System.out.println("videoURI " + videoURI);
-            commands.add(videoURI.trim());
+            System.out.println("videoURI " + URL);
+            commands.add(URL.trim());
         }
 
         commands.forEach(cmd -> System.out.println("command " + cmd));
 
-        if (isVideo()) {
-            HDMIControl.setHDMIActive(true);
-        }
         mediaPlayer = this;
 
         player = new ProcessExecutor(commands);
