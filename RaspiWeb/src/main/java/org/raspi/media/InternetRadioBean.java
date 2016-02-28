@@ -1,5 +1,6 @@
 package org.raspi.media;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,7 +17,9 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.raspi.timer.PreferencesBean;
+import static org.raspi.utils.Constants.PARENT_MEDIA_DIR;
 import org.raspi.utils.InternetRadioStation;
+import org.raspi.utils.MediaPlayer;
 
 /**
  *
@@ -70,11 +73,11 @@ public class InternetRadioBean {
         if (selectedInternetRadioStationEntry != null) {
             setSelectedInternetRadioStationEntry(null);
             internetRadioStationEntry = new InternetRadioStation();
-            setAddMode(true);
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please select", "Please select an Station"));
         }
+        setAddMode(true);
     }
 
     public List<InternetRadioStation> getInternetRadioStationList() {
@@ -129,7 +132,7 @@ public class InternetRadioBean {
 
         if (internetRadioStationEntry.getUri() == null || internetRadioStationEntry.getUri().trim().isEmpty()) {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Web Address cannot be empty"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "URL cannot be empty"));
             return;
         }
 
@@ -138,7 +141,7 @@ public class InternetRadioBean {
         } catch (URISyntaxException ex) {
             Logger.getLogger(InternetRadioBean.class.getName()).log(Level.SEVERE, null, ex);
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Web Address not valid"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "URL not valid"));
             return;
         }
 
@@ -147,7 +150,7 @@ public class InternetRadioBean {
 
         if (isAddMode() && checkDuplicateStation()) {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Station / Web Address conflicting !!!"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Station / URL conflicting !!!"));
             return;
         }
 
@@ -155,7 +158,7 @@ public class InternetRadioBean {
         internetRadioStationListToCheck.remove(internetRadioStationEntry);
         if ((!isAddMode()) && (checkStationConflict(internetRadioStationListToCheck, internetRadioStationEntry))) {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Station time conflicting !!!"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conflict", "Station / URL conflicting !!!"));
             return;
         }
 
@@ -197,10 +200,25 @@ public class InternetRadioBean {
             internetRadioStationList.remove(selectedInternetRadioStationEntry);
             internetRadioStationEntry = new InternetRadioStation();
             setSelectedInternetRadioStationEntry(null);
-            setAddMode(true);
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please select", "Please select an Station"));
+        }
+        setAddMode(true);
+    }
+
+    public void playStation() {
+        if (selectedInternetRadioStationEntry != null) {
+            try {
+                mediaBean.setMediaPlayer(new MediaPlayer(selectedInternetRadioStationEntry.getUri()));
+                mediaBean.getMediaPlayer().play(true);
+            } catch (IOException ex) {
+                Logger.getLogger(InternetRadioBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please select", "Please select an Station"));
+            setAddMode(true);
         }
     }
 

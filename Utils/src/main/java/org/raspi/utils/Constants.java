@@ -10,16 +10,16 @@ public class Constants {
 
     public enum MediaFormat {
 
-        MP3(false), MP4(true), FLV(true), MOV(true), AVI(true), MKV(true);
-        private final boolean hasVideo;
-
-        private MediaFormat(boolean hasVideo) {
-            this.hasVideo = hasVideo;
-        }
-
-        public boolean isHasVideo() {
-            return hasVideo;
-        }
+        MP3, MP4, FLV, MOV, AVI, MKV;
+//        private final boolean hasVideo;
+//
+//        private MediaFormat(boolean hasVideo) {
+//            this.hasVideo = hasVideo;
+//        }
+//
+//        public boolean isHasVideo() {
+//            return hasVideo;
+//        }
 
     }
 

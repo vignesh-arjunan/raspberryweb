@@ -84,11 +84,11 @@ public class ClockBean {
         if (selectedAlarmEntry != null) {
             setSelectedAlarmEntry(null);
             alarmEntry = new AlarmEntry();
-            setAddMode(true);
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please select", "Please select an Alarm"));
         }
+        setAddMode(true);
     }
 
     public List<AlarmEntry> getAlarmList() {
@@ -255,11 +255,11 @@ public class ClockBean {
             alarmList.remove(selectedAlarmEntry);
             alarmEntry = new AlarmEntry();
             setSelectedAlarmEntry(null);
-            setAddMode(true);
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please select", "Please select an Alarm"));
         }
+        setAddMode(true);
     }
 
     public void activateAlarm() {
@@ -292,6 +292,7 @@ public class ClockBean {
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please select", "Please select an Alarm"));
+            setAddMode(true);
         }
     }
 
