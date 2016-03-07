@@ -40,14 +40,16 @@
                 <h:form id="mediaControlsForm">
                     <p:growl id="messages7" showDetail="true" />
                     <p:fieldset legend="Media Controls" style="margin-bottom:20px">
-                        <h:panelGrid columns="6" cellpadding="2">
+                        <h:panelGrid columns="8" cellpadding="2">
                             <p:commandButton value="Pause / Resume" update=":tabView:mediaControlsForm" action="#{mediaBean.pauseOrResume()}" />    
                             <p:commandButton value="Stop" update=":tabView:mediaControlsForm, :tabView:accordionPanel1:playListForm" action="#{mediaBean.stop()}" />
-                            <p:commandButton value="+ Volume" update=":tabView:mediaControlsForm" action="#{mediaBean.increaseVolume()}" />  
-                            <p:commandButton value="- Volume" update=":tabView:mediaControlsForm" action="#{mediaBean.decreaseVolume()}" />  
+                            <p:commandButton value="+++" update=":tabView:mediaControlsForm" action="#{mediaBean.increaseVolume()}" />  
+                            <p:outputLabel value="Volume" />  
+                            <p:commandButton value="---" update=":tabView:mediaControlsForm" action="#{mediaBean.decreaseVolume()}" />  
                             <p:commandButton value="&lt;&lt;" title="seek -600 secs" rendered="false" update=":tabView:mediaControlsForm" action="#{mediaBean.seekMinus600()}" /> 
-                            <p:commandButton value="&lt; Seek" title="seek -30 secs" update=":tabView:mediaControlsForm" action="#{mediaBean.seekMinus30()}" /> 
-                            <p:commandButton value="Seek &gt;" title="seek +30 secs" update=":tabView:mediaControlsForm" action="#{mediaBean.seekPlus30()}" />     
+                            <p:commandButton value="&lt; 30 secs" title="seek -30 secs" update=":tabView:mediaControlsForm" action="#{mediaBean.seekMinus30()}" /> 
+                            <p:outputLabel value="Seek" />  
+                            <p:commandButton value="30 secs &gt;" title="seek +30 secs" update=":tabView:mediaControlsForm" action="#{mediaBean.seekPlus30()}" />     
                             <p:commandButton value="&gt;&gt;" title="seek +600 secs" rendered="false" update=":tabView:mediaControlsForm" action="#{mediaBean.seekPlus600()}" />    
                         </h:panelGrid>                  
                     </p:fieldset>
