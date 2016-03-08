@@ -207,7 +207,7 @@ public class MediaBean implements Runnable {
             return;
         }
         playListBean.getPlayLists().get((getSelectedPlayListIndex()) - 1).getPlayList().add(selectedFile);
-        FacesMessage message = new FacesMessage("Succesful", "Added " + selectedFile.getName() + " to Play List " + getSelectedPlayListIndex());
+        FacesMessage message = new FacesMessage("Successful", "Added " + selectedFile.getName() + " to Play List " + getSelectedPlayListIndex());
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
@@ -230,7 +230,7 @@ public class MediaBean implements Runnable {
             System.out.println("selectedFile.delete() " + selectedFile.delete());
             loadMediaFiles();
             playListBean.getPlayLists().forEach(list -> list.getPlayList().remove(selectedFile));
-            FacesMessage message = new FacesMessage("Succesful", "Removed " + selectedFile.getName());
+            FacesMessage message = new FacesMessage("Successful", "Removed " + selectedFile.getName());
             FacesContext.getCurrentInstance().addMessage(null, message);
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
