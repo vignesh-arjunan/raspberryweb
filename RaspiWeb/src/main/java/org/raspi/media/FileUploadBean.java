@@ -25,7 +25,7 @@ public class FileUploadBean {
     private MediaBean mediaBean;
 
     public void handleFileUpload(FileUploadEvent event) throws IOException {
-        FacesMessage message = new FacesMessage("Succesful", event.getFile().getFileName() + " is uploaded.");
+        FacesMessage message = new FacesMessage("Successful", event.getFile().getFileName() + " is uploaded.");
         FacesContext.getCurrentInstance().addMessage(null, message);
         copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
         mediaBean.loadMediaFiles();
