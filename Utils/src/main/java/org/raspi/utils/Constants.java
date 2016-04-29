@@ -25,6 +25,7 @@ public class Constants {
 
     public static final File PARENT_MEDIA_DIR = new File("/home/pi");
 //    public static final File PARENT_MEDIA_DIR = new File("/Users/vignesh");
+    public static final File USB_MEDIA_DIR = new File("/mnt/usb");
     public static final File PREFERENCES_FILE = new File("/home/pi/Preferences");
 //    public static final File PREFERENCES_FILE = new File("/Users/vignesh/Preferences");
     public static final File MOTION_DIR = new File("/tmp/motion");

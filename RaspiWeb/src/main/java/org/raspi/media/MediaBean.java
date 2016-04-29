@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,7 @@ import javax.inject.Named;
 import org.raspi.utils.AlarmEntry;
 import org.raspi.utils.Constants;
 import static org.raspi.utils.Constants.PARENT_MEDIA_DIR;
+import static org.raspi.utils.Constants.USB_MEDIA_DIR;
 import org.raspi.utils.FileValidator;
 import org.raspi.utils.MediaPlayer;
 import org.raspi.utils.Youtube;
@@ -404,9 +406,12 @@ public class MediaBean implements Runnable {
     }
 
     public void loadMediaFiles() {
-        mediaFiles = Arrays.asList(
+        mediaFiles = new ArrayList<>(Arrays.asList(
                 parentMediaDir.listFiles((dir, name) -> Stream.of(Constants.MediaFormat.values())
-                        .anyMatch(format -> name.toUpperCase().endsWith(format.name()))));
+                        .anyMatch(format -> name.toUpperCase().endsWith(format.name())))));
+        mediaFiles.addAll(Arrays.asList(
+                USB_MEDIA_DIR.listFiles((dir, name) -> Stream.of(Constants.MediaFormat.values())
+                        .anyMatch(format -> name.toUpperCase().endsWith(format.name())))));
     }
 
     public String getFreeMemUsage() throws IOException {
