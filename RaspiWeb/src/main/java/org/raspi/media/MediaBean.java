@@ -34,6 +34,7 @@ import static org.raspi.utils.Constants.PARENT_MEDIA_DIR;
 import static org.raspi.utils.Constants.USB_MEDIA_DIR;
 import org.raspi.utils.FileValidator;
 import org.raspi.utils.MediaPlayer;
+import org.raspi.utils.MountUSB;
 import org.raspi.utils.Youtube;
 
 /**
@@ -213,7 +214,7 @@ public class MediaBean implements Runnable {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
-    public void deleteSelectedFile() {
+    public void deleteSelectedFile() throws IOException {
         if (!FileValidator.validateFile(selectedFile)) {
             return;
         }
@@ -405,7 +406,8 @@ public class MediaBean implements Runnable {
         return toCheck == null ? "" : sdf.format(new Date(toCheck.lastModified()));
     }
 
-    public void loadMediaFiles() {
+    public void loadMediaFiles() throws IOException {
+        MountUSB.mount();
         mediaFiles = new ArrayList<>(Arrays.asList(
                 parentMediaDir.listFiles((dir, name) -> Stream.of(Constants.MediaFormat.values())
                         .anyMatch(format -> name.toUpperCase().endsWith(format.name())))));
@@ -436,7 +438,11 @@ public class MediaBean implements Runnable {
 
     @PostConstruct
     public void init() {
-        loadMediaFiles();
+        try {
+            loadMediaFiles();
+        } catch (IOException ex) {
+            Logger.getLogger(MediaBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
         playerThread.start();
     }
 
